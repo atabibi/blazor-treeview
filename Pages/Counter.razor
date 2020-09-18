@@ -1,0 +1,841 @@
+﻿@page "/counter"
+@using Microsoft.AspNetCore.Components.CompilerServices
+
+<RadzenPanel AllowCollapse="true">
+    <HeaderTemplate>
+            <RadzenIcon Icon="account_box" /><b style="font-size:30px">وراث عباس طبیبی</b>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenTree Data="@_tabaghat" Expand="@LoadPeople" style="display: block;">
+            <RadzenTreeLevel Text="@GetTextForNode" Template="@_nodeTemplate" />
+        </RadzenTree>
+    </ChildContent>
+</RadzenPanel>
+
+<RadzenTree Data="@_movareth.Children">
+    <RadzenTreeLevel TextProperty="FullName" ChildrenProperty="Children">
+        <Template>
+            @if ((context.Value as Person).Gender == Gender.Male)
+            {
+                <RadzenImage Path="images/manMovareth.png" Style="width:40px" />
+            }
+            else
+            {
+                <RadzenImage Path="images/womanMovareth.png" Style="width:40px" />
+            }
+            <span>@((context.Value as Person).FullName)</span>
+        </Template>
+    </RadzenTreeLevel>
+
+
+    <RadzenTreeLevel TextProperty="FullName" ChildrenProperty="Children" HasChildren="@(children => false)">
+        <Template>
+            @if ((context.Value as Person).Gender == Gender.Male)
+            {
+                <RadzenImage Path="images/man.png" Style="width:40px" />
+            }
+            else
+            {
+                <RadzenImage Path="images/woman.png" Style="width:40px" />
+            }
+            <span>@((context.Value as Person).FullName)</span>
+        </Template>
+    </RadzenTreeLevel>
+</RadzenTree>
+
+@functions {
+
+    //---------- Styles ---------------
+    const string StrBtnAdd =
+        "padding-left: 20px;" +
+        "padding-right: 20px;" +
+        "border-radius: 50%;" +
+        "background-color: white;" +
+        "color: #26b050;" +
+        "margin: 0 4px;" +
+        "border: 2px solid #26b050;";
+
+    const string StrBtnRemove =
+        "padding-left: 20px;" +
+        "padding-right: 20px;" +
+        "border-radius: 50%;" +
+        "background-color: white;" +
+        "color: red;" +
+        "margin: 0 4px;" +
+        "border: 2px solid red;";
+    //---------------------------------
+
+
+    IEnumerable<Tabagheh> _tabaghat;
+
+    private static Person _movareth = new Person
+    {
+        FullName = "عباس طبیبی",
+        Gender = Gender.Male,
+        Parents = new List<Person>
+        {
+            new Person
+            {
+                FullName = "علی اکبر طبیبی",
+                Gender = Gender.Male,
+                MustBeLastNode = true,
+                Tabagheh = TabaghehType.Tabagheh1,
+                SubNodeType = SubNodeType.Parents,
+                Darajeh = 1
+
+            },
+            new Person
+            {
+                FullName = "جواهر حسینی",
+                Gender = Gender.Female,
+                MustBeLastNode = true,
+                Tabagheh = TabaghehType.Tabagheh1,
+                SubNodeType = SubNodeType.Parents,
+                Darajeh = 1
+
+            }
+        },
+
+        Children = new List<Person>
+    {
+            new Person
+            {
+                FullName = "نرگس طبیبی",
+                Tabagheh = TabaghehType.Tabagheh1,
+                SubNodeType = SubNodeType.Children,
+                Darajeh = 1,
+                Gender = Gender.Female,
+                Children = new List<Person>
+            {
+                    new Person
+                    {
+                        FullName = "احمد",
+                        Gender = Gender.Male,
+                        Tabagheh = TabaghehType.Tabagheh1,
+                        SubNodeType = SubNodeType.Children,
+                        Darajeh = 2,
+                        Children = new List<Person>
+                    {
+                            new Person
+                            {
+                                FullName = "اکرم",
+                                Gender = Gender.Female,
+                                Tabagheh = TabaghehType.Tabagheh1,
+                                SubNodeType = SubNodeType.Children,
+                                Darajeh = 3,
+                                Children = new List<Person>()
+                            },
+                            new Person
+                            {
+                                FullName = "سعید",
+                                Gender = Gender.Male,
+                                Tabagheh = TabaghehType.Tabagheh1,
+                                SubNodeType = SubNodeType.Children,
+                                Darajeh = 3,
+                                Children = new List<Person>()
+                            }
+                        }
+                    }
+                }
+            },
+            new Person
+            {
+                FullName = "هادی طبیبی",
+                Gender = Gender.Male,
+                Tabagheh = TabaghehType.Tabagheh1,
+                SubNodeType = SubNodeType.Children,
+                Darajeh = 1,
+                Children = null
+            }
+        },
+
+        // طبقه ۲
+        Ajdad = new List<Person>
+    {
+            new Person
+            {
+                FullName = "جواهر طبیبی",
+                AbiOmmi = AbiOmmi.Abi,
+                Gender = Gender.Female,
+                Tabagheh = TabaghehType.Tabagheh2,
+                SubNodeType = SubNodeType.Grandparents,
+                Darajeh = 1,
+                IsAlive = false
+            },
+            new Person
+            {
+                FullName = "محترم محسنی",
+                AbiOmmi = AbiOmmi.Ommi,
+                Gender = Gender.Female,
+                Tabagheh = TabaghehType.Tabagheh2,
+                SubNodeType = SubNodeType.Grandparents,
+                Darajeh = 1,
+                IsAlive = false
+            },
+            new Person
+            {
+                FullName = "محمود طبیبی",
+                AbiOmmi = AbiOmmi.Abi,
+                Gender = Gender.Male,
+                Tabagheh = TabaghehType.Tabagheh2,
+                SubNodeType = SubNodeType.Grandparents,
+                Darajeh = 1,
+                IsAlive = false
+            },
+            new Person
+            {
+                FullName = "نعمت الله حسینی",
+                AbiOmmi = AbiOmmi.Ommi,
+                Gender = Gender.Male,
+                Tabagheh = TabaghehType.Tabagheh2,
+                SubNodeType = SubNodeType.Grandparents,
+                Darajeh = 1,
+                IsAlive = false
+            }
+        },
+        BrothersAndSisters = new List<Person>
+    {
+            new Person
+            {
+                FullName = "مرتضی طبیبی",
+                Gender = Gender.Male,
+                AbiOmmi = AbiOmmi.Abavaini,
+                Tabagheh = TabaghehType.Tabagheh2,
+                SubNodeType = SubNodeType.BrothersAndSistersAbavaini,
+                Darajeh = 1
+            },
+            new Person
+            {
+                FullName = "حمیدرضا طبیبی",
+                AbiOmmi = AbiOmmi.Abavaini,
+                Gender = Gender.Male,
+                Tabagheh = TabaghehType.Tabagheh2,
+                SubNodeType = SubNodeType.BrothersAndSistersAbavaini,
+                Darajeh = 1
+            },
+            new Person
+            {
+                FullName = "فردوس طبیبی",
+                AbiOmmi = AbiOmmi.Abavaini,
+                Gender = Gender.Female,
+                Tabagheh = TabaghehType.Tabagheh2,
+                SubNodeType = SubNodeType.BrothersAndSistersAbavaini,
+                Darajeh = 1
+            },
+            new Person
+            {
+                FullName = "سعید طبیبی",
+                AbiOmmi = AbiOmmi.Abi,
+                Gender = Gender.Male,
+                Tabagheh = TabaghehType.Tabagheh2,
+                SubNodeType = SubNodeType.BrothersAndSistersAbi,
+                Darajeh = 1
+            },
+            new Person
+            {
+                FullName = "زهرا طبیبی",
+                AbiOmmi = AbiOmmi.Ommi,
+                Gender = Gender.Female,
+                Tabagheh = TabaghehType.Tabagheh2,
+                SubNodeType = SubNodeType.BrothersAndSistersOmmi,
+                Darajeh = 1
+            },
+            new Person
+            {
+                FullName = "محمدرضا طبیبی",
+                AbiOmmi = AbiOmmi.Abavaini,
+                Gender = Gender.Male,
+                Tabagheh = TabaghehType.Tabagheh2,
+                SubNodeType = SubNodeType.BrothersAndSistersAbavaini,
+                Darajeh = 1
+            },
+        },
+        Amam = new List<Person>
+    {
+            new Person
+            {
+                FullName = "عمو محمد",
+                AbiOmmi = AbiOmmi.Abavaini,
+                Gender = Gender.Male,
+                IsAlive = false,
+                Tabagheh = TabaghehType.Tabagheh3,
+                SubNodeType = SubNodeType.AmamAbavaini,
+                Darajeh = 1
+            },
+            new Person
+            {
+                FullName = "عمو حسین",
+                AbiOmmi = AbiOmmi.Abavaini,
+                Gender = Gender.Male,
+                IsAlive = false,
+                Tabagheh = TabaghehType.Tabagheh3,
+                SubNodeType = SubNodeType.AmamAbavaini,
+                Darajeh = 1
+            },
+            new Person
+            {
+                FullName = "عمو نداشته",
+                AbiOmmi = AbiOmmi.Abi,
+                Gender = Gender.Male,
+                IsAlive = false,
+                Tabagheh = TabaghehType.Tabagheh3,
+                SubNodeType = SubNodeType.AmamAbi,
+                Darajeh = 1
+            },
+            new Person
+            {
+                FullName = "عمه نداشته",
+                AbiOmmi = AbiOmmi.Ommi,
+                Gender = Gender.Female,
+                IsAlive = false,
+                Tabagheh = TabaghehType.Tabagheh3,
+                SubNodeType = SubNodeType.AmamOmmi,
+                Darajeh = 1
+            },
+        },
+        Akhval = new List<Person>
+    {
+            new Person
+            {
+                FullName = "دای حسین",
+                AbiOmmi = AbiOmmi.Abavaini,
+                Gender = Gender.Male,
+                Tabagheh = TabaghehType.Tabagheh3,
+                SubNodeType = SubNodeType.AkhvalAbavaini,
+                Darajeh = 1
+            },
+            new Person
+            {
+                FullName = "دای رضا",
+                AbiOmmi = AbiOmmi.Abi,
+                Gender = Gender.Male,
+                Tabagheh = TabaghehType.Tabagheh3,
+                SubNodeType = SubNodeType.AkhvalAbi,
+                Darajeh = 1
+            },
+            new Person
+            {
+                FullName = "دای احمد",
+                AbiOmmi = AbiOmmi.Ommi,
+                Gender = Gender.Male,
+                Tabagheh = TabaghehType.Tabagheh3,
+                SubNodeType = SubNodeType.AkhvalOmmi,
+                Darajeh = 1
+            },
+            new Person
+            {
+                FullName = "خاله نداشته",
+                AbiOmmi = AbiOmmi.Ommi,
+                Gender = Gender.Neutral,
+                Tabagheh = TabaghehType.Tabagheh3,
+                SubNodeType = SubNodeType.AkhvalAbavaini,
+                Darajeh = 1
+            },
+        },
+        Hamsar = new List<Person>
+        {
+            new Person {FullName = "منیره یثربی", Gender = Gender.Female, MustBeLastNode = true, Tabagheh=TabaghehType.Hamsar}
+        }
+    };
+
+    protected override void OnInitialized()
+    {
+        InitTree();
+    }
+
+    private void InitTree()
+    {
+        _tabaghat = new List<Tabagheh>
+    {
+            new Tabagheh
+            {
+                Type = TabaghehType.Tabagheh1,
+                Title = "طبقه اول",
+                SubNodes = new List<SubNode>
+            {
+                    new SubNode {Type = SubNodeType.Parents, Title = "والدین"},
+                    new SubNode {Type = SubNodeType.Children, Title = "فرزندان"},
+                }
+            },
+            new Tabagheh
+            {
+                Type = TabaghehType.Tabagheh2,
+                Title = "طبقه دوم",
+                SubNodes = new List<SubNode>
+            {
+                    new SubNode {Type = SubNodeType.Grandparents, Title = "اجداد"},
+                    new SubNode {Type = SubNodeType.BrothersAndSistersAbavaini, Title = "برادران و خواهران ابوینی"},
+                    new SubNode {Type = SubNodeType.BrothersAndSistersAbi, Title = "برادران و خواهران ابی"},
+                    new SubNode {Type = SubNodeType.BrothersAndSistersOmmi, Title = "برادران و خواهران امی"},
+                }
+            },
+            new Tabagheh
+            {
+                Type = TabaghehType.Tabagheh3,
+                Title = "طبقه سوم",
+                SubNodes = new List<SubNode>
+            {
+                    new SubNode {Type = SubNodeType.AkhvalAbavaini, Title = "اخوال ابوینی"},
+                    new SubNode {Type = SubNodeType.AkhvalAbi, Title = "اخوال ابی"},
+                    new SubNode {Type = SubNodeType.AkhvalOmmi, Title = "اخوال امی"},
+
+                    new SubNode {Type = SubNodeType.AmamAbavaini, Title = "اعمام ابوینی"},
+                    new SubNode {Type = SubNodeType.AmamAbi, Title = "اعمام ابی"},
+                    new SubNode {Type = SubNodeType.AmamOmmi, Title = "اعمام امی"},
+                }
+            },
+            new Tabagheh {Type = TabaghehType.Hamsar, Title = "همسر"}
+        };
+    }
+
+    void LoadPeople(TreeExpandEventArgs args)
+    {
+        if (args.Value is Tabagheh tabagheh)
+        {
+            switch (tabagheh.Type)
+            {
+                case TabaghehType.Tabagheh1:
+                    AddChildrenNodeToTabaghe1(args);
+                    break;
+                case TabaghehType.Tabagheh2:
+                    AddChildrenNodeToTabagheh2(args);
+                    break;
+                case TabaghehType.Tabagheh3:
+                    AddChildrenNodeToTabaghe3(args);
+                    break;
+                case TabaghehType.Hamsar:
+                    AddChildrenNode(args, _movareth.Hamsar, (obj) => false);
+                    break;
+            }
+        }
+        else if (args.Value is SubNode node)
+        {
+            var nodeType = node.Type;
+            switch (nodeType)
+            {
+                case SubNodeType.Parents:
+                    AddChildrenNode(args, _movareth.Parents, (p) => false);
+                    break;
+                case SubNodeType.Children:
+                    AddChildrenNode(args, _movareth.Children, (child) => (child as Person)?.Children != null && ((Person)child).Children.Any());
+                    break;
+                case SubNodeType.Grandparents:
+                    AddGrandparents(args);
+                    break;
+                case SubNodeType.BrothersAndSistersAbavaini:
+                    AddBrothersAndSisters(args, AbiOmmi.Abavaini);
+                    break;
+                case SubNodeType.BrothersAndSistersAbi:
+                    AddBrothersAndSisters(args, AbiOmmi.Abi);
+                    break;
+                case SubNodeType.BrothersAndSistersOmmi:
+                    AddBrothersAndSisters(args, AbiOmmi.Ommi);
+                    break;
+                case SubNodeType.AmamAbavaini:
+                    AddAmam(args, AbiOmmi.Abavaini);
+                    break;
+                case SubNodeType.AmamAbi:
+                    AddAmam(args, AbiOmmi.Abi);
+                    break;
+                case SubNodeType.AmamOmmi:
+                    AddAmam(args, AbiOmmi.Ommi);
+                    break;
+                case SubNodeType.AkhvalAbavaini:
+                    AddAkhval(args, AbiOmmi.Abavaini);
+                    break;
+                case SubNodeType.AkhvalAbi:
+                    AddAkhval(args, AbiOmmi.Abi);
+                    break;
+                case SubNodeType.AkhvalOmmi:
+                    AddAkhval(args, AbiOmmi.Ommi);
+                    break;
+            }
+        }
+        else if (args.Value is Person person)
+        {
+            AddChildrenNode(args, person.Children,
+                args.Children.HasChildren = (child) => (child as Person)?.Children != null && ((Person)child).Children.Any()
+                );
+        }
+
+        // Propagate the Template to the children
+        args.Children.Template = _nodeTemplate;
+    }
+
+    private void AddAkhval(TreeExpandEventArgs args, AbiOmmi abiOmmi)
+    {
+        AddChildrenNode(args,
+            _movareth.Akhval.Where(ak => ak.AbiOmmi == abiOmmi),
+            (obj) =>
+            {
+                var p = (obj as Person);
+                string abiOrOmmi = abiOmmi == AbiOmmi.Abavaini ? "ابوینی" : (abiOmmi == AbiOmmi.Abi ? "ابی" : "امی");
+                string gender = "خاله";
+                if (p?.Gender == Gender.Male)
+                    gender = "دایی";
+                string title = $"{p?.FullName}({gender} {abiOrOmmi})";
+                return title;
+            },
+            args.Children.HasChildren = (child) => (child as Person)?.Children != null && ((Person)child).Children.Any()
+            );
+    }
+
+    private void AddAmam(TreeExpandEventArgs args, AbiOmmi abiOmmi)
+    {
+        AddChildrenNode(args,
+            _movareth.Amam.Where(am => am.AbiOmmi == abiOmmi),
+            (obj) =>
+            {
+                var p = (obj as Person);
+                string abiOrOmmi = abiOmmi == AbiOmmi.Abavaini ? "ابوینی" : (abiOmmi == AbiOmmi.Abi ? "ابی" : "امی");
+                string gender = "عمه";
+                if (p?.Gender == Gender.Male)
+                    gender = "عمو";
+                string title = $"{p?.FullName}({gender} {abiOrOmmi})";
+                return title;
+            },
+            args.Children.HasChildren = (child) => (child as Person)?.Children != null && ((Person)child).Children.Any()
+            );
+
+
+    }
+
+    private void AddBrothersAndSisters(TreeExpandEventArgs args, AbiOmmi abiOmmi)
+    {
+        AddChildrenNode(args,
+            _movareth.BrothersAndSisters.Where(bs => bs.AbiOmmi == abiOmmi),
+            (obj) =>
+            {
+                var p = (obj as Person);
+                string abiOrOmmi = abiOmmi == AbiOmmi.Abavaini ? "ابوینی" : (abiOmmi == AbiOmmi.Abi ? "ابی" : "امی");
+                string gender = "خواهر";
+                if (p?.Gender == Gender.Male)
+                    gender = "برادر";
+                string title = $"{p?.FullName}({gender} {abiOrOmmi})";
+                return title;
+            },
+            args.Children.HasChildren = (child) => (child as Person)?.Children != null && ((Person)child).Children.Any()
+            );
+    }
+
+    private void AddGrandparents(TreeExpandEventArgs args)
+    {
+        AddChildrenNode(args, _movareth.Ajdad,
+            (obj) =>
+            {
+                var p = (obj as Person);
+                string abiOrOmmi = "ابی";
+                if (p?.AbiOmmi == AbiOmmi.Ommi)
+                    abiOrOmmi = "امی";
+                string gender = "جده";
+                if (p?.Gender == Gender.Male)
+                    gender = "جد";
+                string title = $"{p?.FullName}({gender} {abiOrOmmi})";
+                return title;
+            },
+            args.Children.HasChildren = (child) => (child as Person)?.Children != null && ((Person)child).Children.Any()
+            );
+    }
+
+    private void AddChildrenNodeToTabaghe1(TreeExpandEventArgs args)
+    {
+        args.Children.Data = _tabaghat.First(t => t.Type == TabaghehType.Tabagheh1).SubNodes;
+        args.Children.Text = (obj) => ((SubNode)obj).Title;
+        args.Children.HasChildren = subNode =>
+        {
+            var node = subNode as SubNode;
+            switch (node?.Type)
+            {
+                case SubNodeType.Parents:
+                    return _movareth.Parents?.Count() > 0;
+                case SubNodeType.Children:
+                    return _movareth.Children?.Count() > 0;
+            }
+
+            return false;
+        };
+
+
+    }
+
+    private void AddChildrenNodeToTabagheh2(TreeExpandEventArgs args)
+    {
+        args.Children.Data = _tabaghat.First(t => t.Type == TabaghehType.Tabagheh2).SubNodes;
+        args.Children.Text = (obj) => ((SubNode)obj).Title;
+        args.Children.HasChildren = subNode =>
+        {
+            var node = subNode as SubNode;
+            switch (node?.Type)
+            {
+                case SubNodeType.Grandparents:
+                    return _movareth.Ajdad?.Count() > 0;
+                case SubNodeType.BrothersAndSistersAbavaini:
+                    return _movareth.BrothersAndSisters?.Count(bs => bs.AbiOmmi == AbiOmmi.Abavaini) > 0;
+                case SubNodeType.BrothersAndSistersAbi:
+                    return _movareth.BrothersAndSisters?.Count(bs => bs.AbiOmmi == AbiOmmi.Abi) > 0;
+                case SubNodeType.BrothersAndSistersOmmi:
+                    return _movareth.BrothersAndSisters?.Count(bs => bs.AbiOmmi == AbiOmmi.Ommi) > 0;
+            }
+
+            return false;
+        };
+    }
+
+    private void AddChildrenNodeToTabaghe3(TreeExpandEventArgs args)
+    {
+        args.Children.Data = _tabaghat.First(t => t.Type == TabaghehType.Tabagheh3).SubNodes;
+        args.Children.Text = (obj) => ((SubNode)obj).Title;
+        args.Children.HasChildren = subNode =>
+        {
+            var node = subNode as SubNode;
+            switch (node?.Type)
+            {
+                case SubNodeType.AkhvalAbavaini:
+                    return _movareth.Akhval?.Count(ak => ak.AbiOmmi == AbiOmmi.Abavaini) > 0;
+                case SubNodeType.AkhvalAbi:
+                    return _movareth.Akhval?.Count(ak => ak.AbiOmmi == AbiOmmi.Abi) > 0;
+                case SubNodeType.AkhvalOmmi:
+                    return _movareth.Akhval?.Count(ak => ak.AbiOmmi == AbiOmmi.Ommi) > 0;
+
+                case SubNodeType.AmamAbavaini:
+                    return _movareth.Amam?.Count(ak => ak.AbiOmmi == AbiOmmi.Abavaini) > 0;
+                case SubNodeType.AmamAbi:
+                    return _movareth.Amam?.Count(ak => ak.AbiOmmi == AbiOmmi.Abi) > 0;
+                case SubNodeType.AmamOmmi:
+                    return _movareth.Amam?.Count(ak => ak.AbiOmmi == AbiOmmi.Ommi) > 0;
+            }
+
+            return false;
+        };
+    }
+
+    void AddChildrenNode(TreeExpandEventArgs args, IEnumerable<Person> data, Func<object, bool> hasChildren)
+    {
+        AddChildrenNode(args, data, (obj) => ((Person)obj).FullName, hasChildren);
+    }
+
+    void AddChildrenNode(TreeExpandEventArgs args, IEnumerable<Person> data, Func<object, string> text, Func<object, bool> hasChildren)
+    {
+        args.Children.Data = data;
+        args.Children.Text = text;
+        args.Children.HasChildren = hasChildren;
+
+        // Propagate the Template to the children
+        args.Children.Template = _nodeTemplate;
+    }
+
+    string GetTextForNode(object data)
+    {
+        return ((Tabagheh)data).Title;
+    }
+
+    //void Log (string eventName, string value) {
+    //    Console.WriteLine ($"{DateTime.Now}, {eventName}: {value}");
+    //}
+
+    //void LogChange (TreeEventArgs args) {
+    //    Log ("Change", $"Item Text: {args.Text}");
+    //}
+
+    //void LogExpand (TreeExpandEventArgs args) {
+
+    //    // if (args.Value is string text) {
+    //    //   Log ("Expand", $"Text: {text}");
+    //    // }
+    //}
+
+
+
+    readonly RenderFragment<RadzenTreeItem> _nodeTemplate = (context) => builder =>
+    {
+
+        if (context.Value is Tabagheh)
+        {
+            builder.OpenComponent<RadzenIcon>(0);
+            builder.AddAttribute(1, "Icon",  "folder" );
+            builder.CloseComponent();
+        }
+        else if (context.Value is SubNode subNode)
+        {
+            string strImageIcon = "images/";
+            switch (subNode.Type)
+            {
+                case SubNodeType.Parents:
+                case SubNodeType.Grandparents:
+                    strImageIcon += "parents.png";
+                    break;
+                default:
+                    strImageIcon += "people.png";
+                    break;
+            }
+
+            builder.OpenComponent<RadzenImage>(0);
+            builder.AddAttribute(1, "Path", strImageIcon);
+            builder.AddAttribute(2, "Style", "width:30px; margin-left:3px;");
+            builder.CloseComponent();
+
+
+        }
+        else if (context.Value is Person person)
+        {
+            string strImageIcon = "images/";
+            if (person.IsAlive)
+            {
+                switch (person.Gender)
+                {
+                    case Gender.Male:
+                        strImageIcon += "man.png";
+                        break;
+                    case Gender.Female:
+                        strImageIcon += "woman.png";
+                        break;
+                    case Gender.Neutral:
+                        strImageIcon += "neutral.png";
+                        break;
+                }
+            }
+            else
+            {
+                switch (person.Gender)
+                {
+                    case Gender.Male:
+                        strImageIcon += "mandead.png";
+                        break;
+                    case Gender.Female:
+                        strImageIcon += "womandead.png";
+                        break;
+                    case Gender.Neutral:
+                        strImageIcon += "neutraldead.png";
+                        break;
+                }
+            }
+
+            builder.OpenComponent<RadzenImage>(0);
+            builder.AddAttribute(1,  "Path", strImageIcon);
+            builder.AddAttribute(1, "Style", "width:40px;");
+            builder.CloseComponent();
+        }
+
+
+        // Append the current item text
+        builder.AddContent(3, context.Text);
+
+
+        if (context.Value is Person personForRemove)
+        {
+            builder.OpenComponent<RadzenButton>(2);
+            builder.AddAttribute(4, "Image", "images/removeIcon.png");
+            builder.AddAttribute(4, "Style", StrBtnRemove);
+
+
+            //builder.AddAttribute(12, "Click", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.MouseEventArgs>>(Microsoft.AspNetCore.Components.EventCallback.Factory.Create<Microsoft.AspNetCore.Components.Web.MouseEventArgs>(context,
+            //    (args) => Click(args, "Button with text")
+            //    )));
+
+            builder.AddAttribute(12, "Click",
+                RuntimeHelpers.TypeCheck(
+                    EventCallback.Factory.Create<MouseEventArgs>(
+                            context,
+                            (args) => DeleteBtnClicked(args, personForRemove, context)
+                        )
+                    )
+            );
+
+            builder.CloseComponent();
+        }
+
+        if (!(context.Value is Tabagheh || (context.Value is Person p) && p.MustBeLastNode))
+        {
+            builder.OpenComponent<RadzenButton>(2);
+            builder.AddAttribute(4, "Image", "images/addIcon.png");
+            builder.AddAttribute(4, "Style", StrBtnAdd);
+            builder.CloseComponent();
+        }
+
+    };
+
+    static void DeleteBtnClicked(MouseEventArgs args, Person person, RadzenTreeItem context)
+    {
+        Console.WriteLine($"حذف {person.FullName} از طبقه {person.Tabagheh} از نوع {person.SubNodeType} و درجه {person.Darajeh}");
+
+        //todo: Must be Complete
+        switch (person.Tabagheh)
+        {
+            case TabaghehType.Hamsar:
+                DeleteHamsar(person);
+                return;
+                //break;
+            case TabaghehType.Tabagheh1:
+                if (person.SubNodeType == SubNodeType.Children)
+                {
+                    DeleteAChild(person);
+                }
+                else
+                {
+                    DeleteAParent(person);
+                }
+                break;
+            case TabaghehType.Tabagheh2:
+                break;
+            case TabaghehType.Tabagheh3:
+                break;
+        }      
+        
+        //Todo: Must be correct. Unfurchanatly this method does not usable in a static method!!
+        // StateHasChanged();   
+    }
+
+    static void DeleteHamsar(Person person)
+    {       
+        if (_movareth.Hamsar.Remove(person))
+        {
+            Console.WriteLine($"{person.FullName} حذف شد");
+        }
+        else
+        {
+            Console.WriteLine($"{person.FullName} یافت نشد");
+        }
+    }
+    static void DeleteAChild(Person person)
+    {        
+        var personParentFound = FindAChildPerson(_movareth,person);
+        
+        if (personParentFound == null)
+        {
+            Console.WriteLine("گره والد یافت  نشده");
+            return;
+        }
+
+        if (personParentFound.Children.Remove(person))
+        {
+            Console.WriteLine($"{person.FullName} حذف شد");
+        }
+        else
+        {
+            Console.WriteLine($"{person.FullName} حذف نشد");
+        }
+    }
+    static void DeleteAParent(Person person)
+    {       
+        Console.WriteLine("هنوز نوشته نشده");
+    }
+
+    static Person FindAChildPerson(Person parent, Person child)
+    {   
+        var found = parent.Children?.SingleOrDefault(p=>p == child);
+        if (found != null)
+        {
+            return parent;
+        }
+      
+        if (parent.Children != null)
+        {
+            foreach (var p in parent.Children)
+            {
+                return FindAChildPerson(p, child);
+            }
+        }
+
+        return null;
+    }
+}
