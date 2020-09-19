@@ -145,7 +145,27 @@
                 Tabagheh = TabaghehType.Tabagheh1,
                 SubNodeType = SubNodeType.Children,
                 Darajeh = 1,
-                Children = null
+                Children = new List<Person>
+                    {
+                            new Person
+                            {
+                                FullName = "سینا",
+                                Gender = Gender.Male,
+                                Tabagheh = TabaghehType.Tabagheh1,
+                                SubNodeType = SubNodeType.Children,
+                                Darajeh = 2,
+                                Children = new List<Person>()
+                            },
+                            new Person
+                            {
+                                FullName = "داود",
+                                Gender = Gender.Male,
+                                Tabagheh = TabaghehType.Tabagheh1,
+                                SubNodeType = SubNodeType.Children,
+                                Darajeh = 2,
+                                Children = new List<Person>()
+                            }
+                        }
             }
         },
 
@@ -170,7 +190,18 @@
                 Tabagheh = TabaghehType.Tabagheh2,
                 SubNodeType = SubNodeType.Grandparents,
                 Darajeh = 1,
-                IsAlive = false
+                IsAlive = false,
+                Parents = new List<Person> {
+                        new Person {
+                            FullName = "فاطمه محسنی",
+                            AbiOmmi = AbiOmmi.Ommi,
+                            Gender = Gender.Female,
+                            Tabagheh = TabaghehType.Tabagheh2,
+                            SubNodeType = SubNodeType.Grandparents,
+                            Darajeh = 2,
+                            IsAlive = false,
+                        }
+                    }
             },
             new Person
             {
@@ -202,7 +233,17 @@
                 AbiOmmi = AbiOmmi.Abavaini,
                 Tabagheh = TabaghehType.Tabagheh2,
                 SubNodeType = SubNodeType.BrothersAndSistersAbavaini,
-                Darajeh = 1
+                Darajeh = 1,
+                Children = new List<Person> {
+                        new Person {
+                            FullName = "محمد حسین طبیبی",
+                            Gender = Gender.Male,
+                            AbiOmmi = AbiOmmi.Abavaini,
+                            Tabagheh = TabaghehType.Tabagheh2,
+                            SubNodeType = SubNodeType.BrothersAndSistersAbavaini,
+                            Darajeh = 2,
+                        }
+                    }
             },
             new Person
             {
@@ -454,9 +495,18 @@
         }
         else if (args.Value is Person person)
         {
-            AddChildrenNode(args, person.Children,
-                args.Children.HasChildren = (child) => (child as Person)?.Children != null && ((Person)child).Children.Any()
-                );
+            if (person.SubNodeType == SubNodeType.Grandparents)
+            {
+                AddParentsNode(args, person.Parents,
+                    args.Children.HasChildren = (parent) => (parent as Person)?.Parents != null && ((Person)parent).Parents.Any()
+                    );
+            }
+            else
+            {
+                AddChildrenNode(args, person.Children,
+                    args.Children.HasChildren = (child) => (child as Person)?.Children != null && ((Person)child).Children.Any()
+                    );
+            }
         }
 
         // Propagate the Template to the children
@@ -534,7 +584,7 @@
                 string title = $"{p?.FullName}({gender} {abiOrOmmi})";
                 return title;
             },
-            args.Children.HasChildren = (child) => (child as Person)?.Children != null && ((Person)child).Children.Any()
+            args.Children.HasChildren = (child) => (child as Person)?.Parents != null && ((Person)child).Parents.Any()
             );
     }
 
@@ -624,6 +674,23 @@
         // Propagate the Template to the children
         args.Children.Template = _nodeTemplate;
     }
+
+    #region For GrandParents Only
+    void AddParentsNode(TreeExpandEventArgs args, IEnumerable<Person> data, Func<object, bool> hasParents)
+    {
+        AddChildrenNode(args, data, (obj) => ((Person)obj).FullName, hasParents);
+    }
+
+    void AddParentsNode(TreeExpandEventArgs args, IEnumerable<Person> data, Func<object, string> text, Func<object, bool> hasParents)
+    {
+        args.Children.Data = data;
+        args.Children.Text = text;
+        args.Children.HasChildren = hasParents;
+
+        // Propagate the Template to the children
+        args.Children.Template = _nodeTemplate;
+    }
+    #endregion
 
     string GetTextForNode(object data)
     {
@@ -847,9 +914,14 @@
       
         if (parent.Children != null)
         {
+            Person parentFound = null;
             foreach (var p in parent.Children)
             {
-                return FindAChildPerson(p, child);
+                parentFound = FindAChildPerson(p, child);
+                if (parentFound != null)
+                {
+                    return parentFound;
+                }
             }
         }
 
@@ -867,28 +939,95 @@
             return;
         }
 
-        if (personParentFound.Ajdad.Remove(person))
+        if (personParentFound.SubNodeType == SubNodeType.Grandparents)
         {
-            Console.WriteLine($"{person.FullName} حذف شد");
+            if (personParentFound.Parents.Remove(person))
+            {
+                Console.WriteLine($"{person.FullName} حذف شد");
+            }
+            else
+            {
+                Console.WriteLine($"{person.FullName} حذف نشد");
+            }
         }
         else
         {
-            Console.WriteLine($"{person.FullName} حذف نشد");
-        }
+            if (personParentFound.Ajdad.Remove(person))
+            {
+                Console.WriteLine($"{person.FullName} حذف شد");
+            }
+            else
+            {
+                Console.WriteLine($"{person.FullName} حذف نشد");
+            }
+        }       
     }
-    static Person FindAGrandParentPerson(Person parent, Person child)
+    static Person FindAGrandParentPerson(Person person, Person parent)
     {   
-        var found = parent.Ajdad?.SingleOrDefault(p=>p == child);
+        Person found = null;
+        
+        if (person.SubNodeType != SubNodeType.Grandparents) //خود مورث
+        {
+            found = person.Ajdad?.SingleOrDefault(p=>p == parent);
+        }
+        else // والد جد یا والد والد جد...
+        {
+            found = person.Parents?.SingleOrDefault(p=>p == parent);
+        }
+        
+        if (found != null)
+        {
+            return person;
+        }
+      
+        if (person.SubNodeType != SubNodeType.Grandparents) //خود مورث
+        {
+            if (person.Ajdad != null)
+            {
+                Person parentHasFound = null;
+                foreach (var p in person.Ajdad)
+                {
+                    parentHasFound = FindAParentPerson(p, parent);
+                    if (parentHasFound != null)
+                    {
+                        return parentHasFound;
+                    }
+                }
+            }
+        }
+        else // والد جد یا والد والد جد...
+        {
+            if (person.Parents != null)
+            {
+                Person parentHasFound = null;
+                foreach (var p in person.Parents)
+                {
+                    parentHasFound = FindAParentPerson(p, parent);
+                    if (parentHasFound != null)
+                    {
+                        return parentHasFound;
+                    }
+                }
+            }
+        }
+        
+
+        return null;
+    }
+
+    static Person FindAParentPerson(Person parent, Person child)
+    {   
+        var found = parent.Parents?.SingleOrDefault(p=>p == child);
         if (found != null)
         {
             return parent;
         }
       
-        if (parent.Ajdad != null)
+        if (parent.Parents != null)
         {
-            foreach (var p in parent.Ajdad)
+            foreach (var p in parent.Parents)
             {
-                return FindAGrandParentPerson(p, child);
+                return FindAParentPerson(p, child);
             }
         }
 
