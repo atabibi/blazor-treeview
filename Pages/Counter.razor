@@ -867,7 +867,7 @@
             case TabaghehType.Tabagheh1:
                 if (person.SubNodeType == SubNodeType.Children)
                 {
-                    DeleteAChild(person);
+                    ChildrenAddEditDelete.DeleteAChild(_movareth, person);
                 }
                 else
                 {
@@ -897,49 +897,6 @@
     #region Delete a Person
     
 
-
-    static void DeleteAChild(Person person)
-    {        
-        var personParentFound = FindAChildPerson(_movareth,person);
-        
-        if (personParentFound == null)
-        {
-            Console.WriteLine("گره والد یافت  نشده");
-            return;
-        }
-
-        if (personParentFound.Children.Remove(person))
-        {
-            Console.WriteLine($"{person.FullName} حذف شد");
-        }
-        else
-        {
-            Console.WriteLine($"{person.FullName} حذف نشد");
-        }
-    }
-    static Person FindAChildPerson(Person parent, Person child)
-    {   
-        var found = parent.Children?.SingleOrDefault(p=>p == child);
-        if (found != null)
-        {
-            return parent;
-        }
-      
-        if (parent.Children != null)
-        {
-            Person parentFound = null;
-            foreach (var p in parent.Children)
-            {
-                parentFound = FindAChildPerson(p, child);
-                if (parentFound != null)
-                {
-                    return parentFound;
-                }
-            }
-        }
-
-        return null;
-    }
 
     #region Delete a Grandparent and his(her) Parents
     static void DeleteAGrandParent(Person person)
