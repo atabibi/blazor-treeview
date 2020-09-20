@@ -862,7 +862,7 @@
         switch (person.Tabagheh)
         {
             case TabaghehType.Hamsar:
-                DeleteHamsar(person);
+                HamsarAddEditDelete.DeleteHamsar(_movareth, person);
                 break;
             case TabaghehType.Tabagheh1:
                 if (person.SubNodeType == SubNodeType.Children)
@@ -895,17 +895,7 @@
     }
 
     #region Delete a Person
-    static void DeleteHamsar(Person person)
-    {       
-        if (_movareth.Hamsar.Remove(person))
-        {
-            Console.WriteLine($"{person.FullName} حذف شد");
-        }
-        else
-        {
-            Console.WriteLine($"{person.FullName} یافت نشد");
-        }
-    }
+    
 
     static void DeleteAParent(Person person)
     {       
@@ -1225,7 +1215,7 @@
 
     #endregion // Delete a Person
 
-    
+
 
     // Jquery
     protected override async Task OnAfterRenderAsync(bool firstRender)
