@@ -1,10 +1,11 @@
 using System;
+using System.Linq;
 
 namespace T00.Shared.ErthTreeCodes
 {
     public static class ParentsAddEditDelete
     {
-        public static void DeleteAParent(Person movareth, Person person)
+        internal static void DeleteAParent(Person movareth, Person person)
         {
             if (movareth.Parents.Remove(person))
             {
@@ -14,6 +15,22 @@ namespace T00.Shared.ErthTreeCodes
             {
                 Console.WriteLine($"{person.FullName} حذف نشد");
             }
+        }
+
+        internal static void AddParent(Person movareth , Person newPerson)
+        {
+            if (movareth.Parents?.Count(w=>w.Gender == newPerson.Gender) > 0 )
+            {
+                Console.WriteLine("والد یا والده قبلا اضافه شده است. امکان افزودن والد دیگر از این جنس میسر نیست");
+                return;
+            }
+
+            newPerson.MustBeLastNode = true;
+            newPerson.SubNodeType = SubNodeType.Parents;
+            newPerson.Tabagheh = TabaghehType.Tabagheh1;
+            newPerson.Darajeh = 1;
+
+            movareth.Parents?.Add(newPerson);
         }
     }
 }

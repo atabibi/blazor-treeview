@@ -1,6 +1,8 @@
 ﻿@page "/counter"
 @inject IJSRuntime jsRuntime
+@* @inject DialogService dialogService *@
 @using Microsoft.AspNetCore.Components.CompilerServices
+
 
 <RadzenPanel AllowCollapse="true">
    <HeaderTemplate >
@@ -827,11 +829,6 @@
             builder.AddAttribute(4, "Image", "images/removeIcon.png");
             builder.AddAttribute(4, "Style", StrBtnRemove);
 
-
-            //builder.AddAttribute(12, "Click", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.MouseEventArgs>>(Microsoft.AspNetCore.Components.EventCallback.Factory.Create<Microsoft.AspNetCore.Components.Web.MouseEventArgs>(context,
-            //    (args) => Click(args, "Button with text")
-            //    )));
-
             builder.AddAttribute(12, "Click",
                 RuntimeHelpers.TypeCheck(
                     EventCallback.Factory.Create<MouseEventArgs>(
@@ -844,14 +841,30 @@
             builder.CloseComponent();
         }
 
-        if (!(context.Value is Tabagheh || (context.Value is Person p) && p.MustBeLastNode))
+        if (
+                !(context.Value is Tabagheh || (context.Value is Person p) && p.MustBeLastNode) ||
+                ( //Hamsar
+                    (context.Value is Tabagheh tabagheh) && 
+                    (tabagheh.Type == TabaghehType.Hamsar)
+                )
+            )
         {
             builder.OpenComponent<RadzenButton>(2);
             builder.AddAttribute(4, "Image", "images/addIcon.png");
             builder.AddAttribute(4, "Style", StrBtnAdd);
+
+            builder.AddAttribute(12, "Click",
+                RuntimeHelpers.TypeCheck(
+                    EventCallback.Factory.Create<MouseEventArgs>(
+                            context,
+                            (args) => AddBtnClicked(args, context, context.Tree)
+                        )
+                    )
+            );
+
             builder.CloseComponent();
         }
-
+      
     };
 
     static void DeleteBtnClicked(MouseEventArgs args, Person person, RadzenTreeItem context, RadzenTree tree)
@@ -893,6 +906,46 @@
         _thisComponent.StateHasChanged();        
     }
 
+    static void AddBtnClicked(MouseEventArgs args, RadzenTreeItem context, RadzenTree tree)
+    {
+        // در اینجا باید یک فرم نمایش داده شود که اطلاعات وارث جدید شامل:
+        // نام کامل
+        // جنسیت
+        // و زنده بودن یا نبودن
+        // او را از کاربر بگیرد و باز گرداند
+        var newPerson = new Person {
+            FullName = "وارث جدید",
+            Gender = Gender.Male,
+            AbiOmmi = AbiOmmi.Abi,
+            IsAlive = true
+        };
+
+        if (context.Value is Person person)
+        {
+            Console.WriteLine($"افزودن گره به {person.FullName}");
+            AddNode.AddNodeToPerson(person, newPerson);
+        }
+        else if (context.Value is SubNode subNode)
+        {
+            Console.WriteLine($"افزودن گره به {subNode.Title}");
+            AddNode.AddNodeToSubNode(subNode, _movareth, newPerson);
+        }
+        else if (context.Value is Tabagheh tabagheh && tabagheh.Type == TabaghehType.Hamsar)
+        {
+            Console.WriteLine($"افزودن گره به {tabagheh.Title}");
+            HamsarAddEditDelete.AddHamsar(_movareth, newPerson);
+        }
+        else 
+        {
+            Console.WriteLine($"خطا! گره ی والد نوع درستی ندارد");
+            return;
+        }
+        
+        // Unfurchanatly StateHasChanged does not usable in a static method!!
+        _thisComponent.StateHasChanged();  
+    }
+
+   
 
     // Jquery
     protected override async Task OnAfterRenderAsync(bool firstRender)

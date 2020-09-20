@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace T00.Shared.ErthTreeCodes
@@ -48,6 +49,21 @@ namespace T00.Shared.ErthTreeCodes
             }
 
             return null;
+        }
+
+        internal static void AddChild(Person movareth, Person newPerson)
+        {
+            if (movareth.Children == null)
+            {
+                movareth.Children = new List<Person>();
+            }
+
+            newPerson.Tabagheh = TabaghehType.Tabagheh1;
+            newPerson.Darajeh = 1;
+            newPerson.SubNodeType = SubNodeType.Children;
+
+            movareth.Children.Add(newPerson);
+
         }
     }
 }

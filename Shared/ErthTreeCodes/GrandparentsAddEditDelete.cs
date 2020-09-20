@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace T00.Shared.ErthTreeCodes
@@ -38,6 +39,7 @@ namespace T00.Shared.ErthTreeCodes
                 }
             }
         }
+
         static Person FindAGrandParentPerson(Person person, Person parent)
         {
             Person found = null;
@@ -91,6 +93,7 @@ namespace T00.Shared.ErthTreeCodes
             return null;
         }
 
+
         static Person FindAParentPerson(Person parent, Person child)
         {
             var found = parent.Parents?.SingleOrDefault(p => p == child);
@@ -109,5 +112,64 @@ namespace T00.Shared.ErthTreeCodes
 
             return null;
         }
+
+
+        /// <summary>
+        /// افزودن یک جد یا جده ی درجه ۱
+        /// </summary>
+        /// <param name="movareth">مورث</param>
+        /// <param name="newPerson">جد یا جده</param>
+        internal static void AddGrandparent(Person movareth, Person newPerson)
+        {
+            if (newPerson.AbiOmmi == AbiOmmi.Abavaini)
+            {
+                Console.WriteLine("جد و جده نمی توانند ابوینی باشند");
+                return;
+            }
+
+            if (movareth.Ajdad == null)
+            {
+                movareth.Ajdad = new List<Person>();
+            }
+
+            if (movareth.Ajdad.Count(a => a.AbiOmmi == newPerson.AbiOmmi && a.Gender == newPerson.Gender) > 0)
+            {
+                // قبلا اضافه شده است;
+                Console.WriteLine("این جد یا جده قبلا افزوده شده است");
+                return;
+            }
+
+            
+            newPerson.Darajeh = 1;
+            newPerson.Tabagheh = TabaghehType.Tabagheh2;
+            newPerson.SubNodeType = SubNodeType.Grandparents;
+            
+            movareth.Ajdad.Add(newPerson);
+        }
+
+
+        /// <summary>
+        /// افزودن یک جد یا جده درجه ۲ یا بالاتر
+        /// </summary>
+        /// <param name="person">جد فرزند</param>
+        /// <param name="newPerson">جد جدید</param>
+        internal static void AddParent(Person person, Person newPerson)
+        {
+            newPerson.SubNodeType = SubNodeType.Grandparents;
+            newPerson.Tabagheh = TabaghehType.Tabagheh2;
+            newPerson.Darajeh = person.Darajeh + 1;
+            newPerson.AbiOmmi = person.AbiOmmi;
+
+            if (person.Parents == null)
+            {
+                person.Parents = new List<Person>();
+            }
+
+            if (person.Parents?.Count(p => p.Gender == newPerson.Gender) == 0)
+            {                
+                person.Parents.Add(newPerson);
+            }
+        }
+
     }
 }
