@@ -880,7 +880,7 @@
                 }
                 else
                 {
-                    DeleteABrotherOrSister(person);
+                    BrothersSistersAddEditDelete.DeleteABrotherOrSister(_movareth, person);
                 }
                 
                 break;
@@ -893,81 +893,8 @@
         _thisComponent.StateHasChanged();        
     }
 
-    #region Delete a Person
-    
-
-
-    #region Delete a Grandparent and his(her) Parents
-    
-    #endregion
-
-    #region Delete a Brother/Sister and his/her Children
-    static void DeleteABrotherOrSister(Person person)
-    {
-        var personParentFound = FindABrotherOrSisterPerson(_movareth,person);
-        
-        if (personParentFound == null)
-        {
-            Console.WriteLine("گره والد یافت  نشده");
-            return;
-        }
-
-        bool success;
-        if (personParentFound.Tabagheh == TabaghehType.Tabagheh2) // parent is not movareth
-        {
-            success =  personParentFound.Children.Remove(person);           
-        }
-        else    // parent is movareth
-        {
-            success =  personParentFound.BrothersAndSisters.Remove(person);
-        }
-        
-        if (success)
-        {
-            Console.WriteLine($"{person.FullName} حذف شد");
-        }
-        else
-        {
-            Console.WriteLine($"{person.FullName} حذف نشد");
-        }
-    }
-
-    static Person FindABrotherOrSisterPerson(Person parent, Person bsOrHisChild)
-    {   
-        Person found = null;
-        
-        if (parent.Tabagheh == TabaghehType.Tabagheh2) // parent is Not Movareth
-        {
-            found = parent.Children?.SingleOrDefault(p=>p == bsOrHisChild); 
-        }
-        else // parent is Movareth
-        {
-            found = parent.BrothersAndSisters?.SingleOrDefault(p=>p == bsOrHisChild); 
-        }
-        
-        if (found != null)
-        {
-            return parent;
-        }
-      
-        if (parent.BrothersAndSisters != null)
-        {
-            Person parentFound = null;
-            foreach (var p in parent.BrothersAndSisters)
-            {
-                parentFound = FindABrotherOrSisterPerson(p, bsOrHisChild);
-                if (parentFound != null)
-                {
-                    return parentFound;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    #endregion
-
+    #region Delete a Person  
+   
     #region Delete an Amm or Khal and his/her Children
     static void DeleteAnAmmOrKhall(Person person)
     {
