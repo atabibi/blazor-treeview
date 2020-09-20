@@ -871,7 +871,7 @@
                 }
                 else
                 {
-                    DeleteAParent(person);
+                     ParentsAddEditDelete.DeleteAParent(_movareth, person);
                 }
                 break;
             case TabaghehType.Tabagheh2:
@@ -897,17 +897,6 @@
     #region Delete a Person
     
 
-    static void DeleteAParent(Person person)
-    {       
-        if (_movareth.Parents.Remove(person))
-        {
-            Console.WriteLine($"{person.FullName} حذف شد");
-        }
-        else
-        {
-            Console.WriteLine($"{person.FullName} حذف نشد");
-        }
-    }
 
     static void DeleteAChild(Person person)
     {        
