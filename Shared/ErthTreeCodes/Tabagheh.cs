@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace T00.Shared
+namespace T00.Shared.ErthTreeCodes
 {
     public class Tabagheh
     {

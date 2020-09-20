@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace T00.Shared
+namespace T00.Shared.ErthTreeCodes
 {
     public class Person
     {
