@@ -42,7 +42,7 @@ namespace T00.Shared.ErthTreeCodes
             if (parent.Tabagheh == TabaghehType.Tabagheh2) // parent is Not Movareth
             {
                 found = parent.Children?.SingleOrDefault(p => p == bsOrHisChild);
-            }
+                }
             else // parent is Movareth
             {
                 found = parent.BrothersAndSisters?.SingleOrDefault(p => p == bsOrHisChild);
