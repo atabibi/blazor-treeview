@@ -187,6 +187,7 @@ app {
 /* For Radzen */
 .ui-tree {
     display: block;
+    padding: 25px;
 }
 
 .ui-treenode-children {

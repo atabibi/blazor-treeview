@@ -1,4 +1,5 @@
 ﻿@page "/counter"
+@inject IJSRuntime jsRuntime
 @using Microsoft.AspNetCore.Components.CompilerServices
 
 <RadzenPanel AllowCollapse="true">
@@ -1032,5 +1033,19 @@
         }
 
         return null;
+    }
+
+
+    // Jquery
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // متاسفانه مثلثی که فرزندان را نمایش یا مخفی می کند
+        // در حالت راست نویس موقعیت درستی نداشت
+        // و با 
+        // CSS
+        // نمیشد درستش کرد. خط زیر جبران آن است
+        await jsRuntime.InvokeVoidAsync("RedesignNodes");
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 }
