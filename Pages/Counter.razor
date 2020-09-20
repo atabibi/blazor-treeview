@@ -44,7 +44,7 @@
     </RadzenTreeLevel>
 </RadzenTree>
 
-@functions {
+@code {
 
     //---------- Styles ---------------
     const string StrBtnAdd =
@@ -322,7 +322,18 @@
                 IsAlive = false,
                 Tabagheh = TabaghehType.Tabagheh3,
                 SubNodeType = SubNodeType.AmamAbavaini,
-                Darajeh = 1
+                Darajeh = 1,
+                Children = new List<Person> {
+                        new Person {
+                            FullName = "عباس طبیبی",
+                            AbiOmmi = AbiOmmi.Abavaini,
+                            Gender = Gender.Male,
+                            IsAlive = true,
+                            Tabagheh = TabaghehType.Tabagheh3,
+                            SubNodeType = SubNodeType.AmamAbavaini,
+                            Darajeh = 2,
+                        }
+                    }
             },
             new Person
             {
@@ -354,7 +365,17 @@
                 Gender = Gender.Male,
                 Tabagheh = TabaghehType.Tabagheh3,
                 SubNodeType = SubNodeType.AkhvalAbavaini,
-                Darajeh = 1
+                Darajeh = 1,
+                Children = new List<Person> {
+                        new Person {
+                           FullName = "مریم حسینی",
+                            AbiOmmi = AbiOmmi.Abavaini,
+                            Gender = Gender.Female,
+                            Tabagheh = TabaghehType.Tabagheh3,
+                            SubNodeType = SubNodeType.AkhvalAbavaini,
+                            Darajeh = 2, 
+                        }
+                    }
             },
             new Person
             {
@@ -865,6 +886,7 @@
                 
                 break;
             case TabaghehType.Tabagheh3:
+                DeleteAnAmmOrKhall(person);
                 break;
         }      
         
@@ -872,6 +894,7 @@
         _thisComponent.StateHasChanged();        
     }
 
+    #region Delete a Person
     static void DeleteHamsar(Person person)
     {       
         if (_movareth.Hamsar.Remove(person))
@@ -1112,6 +1135,97 @@
     }
 
     #endregion
+
+    #region Delete an Amm or Khal and his/her Children
+    static void DeleteAnAmmOrKhall(Person person)
+    {
+        var personParentFound = FindAnAmmOrKhallPerson(_movareth,person);
+        
+        if (personParentFound == null)
+        {
+            Console.WriteLine("گره والد یافت  نشده");
+            return;
+        }
+
+        bool success;
+        if (personParentFound.Tabagheh == TabaghehType.Tabagheh3) // parent is not movareth
+        {
+            success =  personParentFound.Children.Remove(person);           
+        }
+        else    // parent is movareth
+        {            
+            success =  personParentFound.Amam.Remove(person);
+            if (success == false)
+            {
+                success =  personParentFound.Akhval.Remove(person);
+            }
+        }
+        
+        if (success)
+        {
+            Console.WriteLine($"{person.FullName} حذف شد");
+        }
+        else
+        {
+            Console.WriteLine($"{person.FullName} حذف نشد");
+        }
+    }
+
+    static Person FindAnAmmOrKhallPerson(Person parent, Person amAkhOrHisChild)
+    {   
+        Person found = null;
+        
+        if (parent.Tabagheh == TabaghehType.Tabagheh3) // parent is Not Movareth
+        {
+            found = parent.Children?.SingleOrDefault(p=>p == amAkhOrHisChild); 
+        }
+        else // parent is Movareth
+        {
+            found = parent.Amam?.SingleOrDefault(p=>p == amAkhOrHisChild); 
+            if (found == null)
+            {
+                found = parent.Akhval?.SingleOrDefault(p=>p == amAkhOrHisChild);
+            }
+        }
+        
+        if (found != null)
+        {
+            return parent;
+        }
+      
+        if (parent.Amam != null)
+        {
+            Person parentFound = null;
+            foreach (var p in parent.Amam)
+            {
+                parentFound = FindAnAmmOrKhallPerson(p, amAkhOrHisChild);
+                if (parentFound != null)
+                {
+                    return parentFound;
+                }
+            }
+        }
+
+        if (parent.Akhval != null)
+        {
+            Person parentFound = null;
+            foreach (var p in parent.Akhval)
+            {
+                parentFound = FindAnAmmOrKhallPerson(p, amAkhOrHisChild);
+                if (parentFound != null)
+                {
+                    return parentFound;
+                }
+            }
+        }
+
+        return null;
+    }
+    #endregion // Delete an Amm or Khal
+
+    #endregion // Delete a Person
+
+    
 
     // Jquery
     protected override async Task OnAfterRenderAsync(bool firstRender)
