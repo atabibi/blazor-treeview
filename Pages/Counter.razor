@@ -271,7 +271,17 @@
                 Gender = Gender.Male,
                 Tabagheh = TabaghehType.Tabagheh2,
                 SubNodeType = SubNodeType.BrothersAndSistersAbi,
-                Darajeh = 1
+                Darajeh = 1,
+                Children = new List<Person> {
+                        new Person {
+                            FullName = "هما طبیبی",
+                            Gender = Gender.Female,
+                            AbiOmmi = AbiOmmi.Abi,
+                            Tabagheh = TabaghehType.Tabagheh2,
+                            SubNodeType = SubNodeType.BrothersAndSistersAbavaini,
+                            Darajeh = 2,
+                        }
+                    }
             },
             new Person
             {
@@ -850,7 +860,7 @@
                 }
                 else
                 {
-                   // DeleteABrotherOrSister(person);
+                    DeleteABrotherOrSister(person);
                 }
                 
                 break;
@@ -929,7 +939,7 @@
         return null;
     }
 
-    #region Delete a Grandparent or his(her) Parents
+    #region Delete a Grandparent and his(her) Parents
     static void DeleteAGrandParent(Person person)
     {        
         var personParentFound = FindAGrandParentPerson(_movareth,person);
@@ -1034,6 +1044,73 @@
 
         return null;
     }
+    #endregion
+
+    #region Delete a Brother/Sister and his/her Children
+    static void DeleteABrotherOrSister(Person person)
+    {
+        var personParentFound = FindABrotherOrSisterPerson(_movareth,person);
+        
+        if (personParentFound == null)
+        {
+            Console.WriteLine("گره والد یافت  نشده");
+            return;
+        }
+
+        bool success;
+        if (personParentFound.Tabagheh == TabaghehType.Tabagheh2) // parent is not movareth
+        {
+            success =  personParentFound.Children.Remove(person);           
+        }
+        else    // parent is movareth
+        {
+            success =  personParentFound.BrothersAndSisters.Remove(person);
+        }
+        
+        if (success)
+        {
+            Console.WriteLine($"{person.FullName} حذف شد");
+        }
+        else
+        {
+            Console.WriteLine($"{person.FullName} حذف نشد");
+        }
+    }
+
+    static Person FindABrotherOrSisterPerson(Person parent, Person bsOrHisChild)
+    {   
+        Person found = null;
+        
+        if (parent.Tabagheh == TabaghehType.Tabagheh2) // parent is Not Movareth
+        {
+            found = parent.Children?.SingleOrDefault(p=>p == bsOrHisChild); 
+        }
+        else // parent is Movareth
+        {
+            found = parent.BrothersAndSisters?.SingleOrDefault(p=>p == bsOrHisChild); 
+        }
+        
+        if (found != null)
+        {
+            return parent;
+        }
+      
+        if (parent.BrothersAndSisters != null)
+        {
+            Person parentFound = null;
+            foreach (var p in parent.BrothersAndSisters)
+            {
+                parentFound = FindABrotherOrSisterPerson(p, bsOrHisChild);
+                if (parentFound != null)
+                {
+                    return parentFound;
+                }
+            }
+        }
+
+        return null;
+    }
+
     #endregion
 
     // Jquery
