@@ -850,7 +850,7 @@
                 }
                 else
                 {
-                    // DeleteABrotherOrSister(person);
+                   // DeleteABrotherOrSister(person);
                 }
                 
                 break;
@@ -929,7 +929,7 @@
         return null;
     }
 
-
+    #region Delete a Grandparent or his(her) Parents
     static void DeleteAGrandParent(Person person)
     {        
         var personParentFound = FindAGrandParentPerson(_movareth,person);
@@ -1034,7 +1034,7 @@
 
         return null;
     }
-
+    #endregion
 
     // Jquery
     protected override async Task OnAfterRenderAsync(bool firstRender)
