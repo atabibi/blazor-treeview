@@ -4,7 +4,7 @@
 @using Microsoft.AspNetCore.Components.CompilerServices
 
 
-<RadzenPanel AllowCollapse="true">
+<RadzenPanel AllowCollapse="true" Style="margin-bottom:20px;">
    <HeaderTemplate >
             <b style="font-size:30px;">وراث عباس طبیبی</b>
     </HeaderTemplate>
@@ -15,36 +15,6 @@
     </ChildContent>
 </RadzenPanel>
 
-<RadzenTree Data="@_movareth.Children">
-    <RadzenTreeLevel TextProperty="FullName" ChildrenProperty="Children">
-        <Template>
-            @if ((context.Value as Person).Gender == Gender.Male)
-            {
-                <RadzenImage Path="images/manMovareth.png" Style="width:40px" />
-            }
-            else
-            {
-                <RadzenImage Path="images/womanMovareth.png" Style="width:40px" />
-            }
-            <span>@((context.Value as Person).FullName)</span>
-        </Template>
-    </RadzenTreeLevel>
-
-
-    <RadzenTreeLevel TextProperty="FullName" ChildrenProperty="Children" HasChildren="@(children => false)">
-        <Template>
-            @if ((context.Value as Person).Gender == Gender.Male)
-            {
-                <RadzenImage Path="images/man.png" Style="width:40px" />
-            }
-            else
-            {
-                <RadzenImage Path="images/woman.png" Style="width:40px" />
-            }
-            <span>@((context.Value as Person).FullName)</span>
-        </Template>
-    </RadzenTreeLevel>
-</RadzenTree>
 
 @code {
 
