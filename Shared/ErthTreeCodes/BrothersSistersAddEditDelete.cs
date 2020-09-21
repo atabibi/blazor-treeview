@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace T00.Shared.ErthTreeCodes
@@ -62,6 +63,9 @@ namespace T00.Shared.ErthTreeCodes
                 Console.WriteLine("خطا! تنها برادران و خواهران درجه یک اجازه افزوده شدن دارند");
             }
             
+            if (movareth.BrothersAndSisters == null)
+                movareth.BrothersAndSisters = new List<Person>();
+
             movareth.BrothersAndSisters.Add(bsPerson);
         }
 

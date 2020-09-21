@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace T00.Shared.ErthTreeCodes
@@ -30,6 +31,9 @@ namespace T00.Shared.ErthTreeCodes
             newPerson.Tabagheh = TabaghehType.Tabagheh1;
             newPerson.Darajeh = 1;
 
+            if (movareth.Parents == null)
+                movareth.Parents = new List<Person>();
+                
             movareth.Parents?.Add(newPerson);
         }
     }
