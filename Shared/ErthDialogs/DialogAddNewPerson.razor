@@ -1,11 +1,175 @@
 @page "/dialogaddnewperson"
+@inject DialogService dialogService
 
-<h1>افزودن خویشاوند</h1>
-<p>خویشاوند جدید به @ParentNodeName اضافه خواهد شد.</p>
+<p>خویشاوند جدید به @parentNodeName اضافه خواهد شد</p>
+<RadzenCard Style="margin-bottom: 20px;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="input-group mb-2">            
+                <RadzenTextBox Placeholder="نام کامل" @bind-Value="@NewVareth.FullName" />
+            </div>
+            @if (TypeOfNewVareth != NewVarethType.Hamsar)
+            {
+                
+                <div class="input-group mb-2">            
+                    <RadzenDropDown AllowClear="false" @bind-Value="@NewVareth.Gender" TValue="Gender"  Placeholder="جنسیت" Data="@GenderForDropDown" TextProperty="Title" ValueProperty="Gender"  />
+                </div>
+
+
+                @if (TypeOfNewVareth == NewVarethType.SubNode)
+                {
+                    
+                    if (
+                        (NodeTreeItem.Value as SubNode).Type == SubNodeType.Grandparents
+                    )
+                    {
+                        <div class="input-group mb-2">            
+                            <RadzenDropDown AllowClear="false" @bind-Value="@NewVareth.AbiOmmi" TValue="AbiOmmi"  Placeholder="ابی، امی یا ابوینی" Data="@AbiOmmiForDropDown.Where(w=>w.AbiOmmi != AbiOmmi.Abavaini)" TextProperty="Title" ValueProperty="AbiOmmi"  />
+                        </div>
+                    }
+                }   
+            }            
+            <div class="input-group mb-2">            
+                <RadzenCheckBox @bind-Value="@NewVareth.IsAlive"  TValue="bool"  />
+                <RadzenLabel Text="زنده" Component="CheckBox1" Style="margin-left: 5px;" />
+            </div>
+        </div>
+    </div>
+</RadzenCard>
+<div class="row">
+    <div class="col-md-12">
+        <RadzenButton Text="تایید" Disabled="@(NewVareth.FullName == null || NewVareth.FullName?.Trim().Length == 0)" Click="BtnOkClicked" class="float-left"/>
+        <RadzenButton Text="انصراف" Click="@((args) => dialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" class="float-left" style="margin-left:5px;"/>
+    </div>
+</div>
 
 @code {
 
-    [Parameter] 
-    public string ParentNodeName {get;set;}
+    protected enum NewVarethType
+    {
+        Hamsar,
+        SubNode,
+        Person
+    }
 
+    protected class GenderForDropDownType {
+        public Gender Gender { get; set; }
+        public string Title { get; set; }
+    }
+
+    protected class AbiOmmiForDropDownType {
+        public AbiOmmi AbiOmmi { get; set; }
+        public string Title { get; set; }
+    }
+
+    [Parameter] 
+    public RadzenTreeItem NodeTreeItem {get;set;}
+
+    [Parameter]
+    public Person Movareth { get; set; }
+
+    [Parameter]
+    public Object CallerPageComponent { get; set; }
+
+    string parentNodeName;
+
+    Person NewVareth = new Person();
+    NewVarethType TypeOfNewVareth {get;set;}
+
+    List<GenderForDropDownType> GenderForDropDown {get;set;} = new List<GenderForDropDownType> {
+         new GenderForDropDownType {
+             Gender = Gender.Male,
+             Title = "مذکر"
+         },
+         new GenderForDropDownType {
+             Gender = Gender.Female,
+             Title = "مونث"
+         },
+         new GenderForDropDownType {
+             Gender = Gender.Neutral,
+             Title = "خنثی"
+         },
+    };
+
+    List<AbiOmmiForDropDownType> AbiOmmiForDropDown {get; set;} = new List<AbiOmmiForDropDownType> {
+        new AbiOmmiForDropDownType {
+            AbiOmmi = AbiOmmi.Abavaini,
+            Title = "ابوینی"
+        },
+        new AbiOmmiForDropDownType {
+            AbiOmmi = AbiOmmi.Abi,
+            Title = "ابی"
+        },
+        new AbiOmmiForDropDownType {
+            AbiOmmi = AbiOmmi.Ommi,
+            Title = "امی"
+        }
+    };
+
+    protected override void OnInitialized()
+    {
+        if (NodeTreeItem.Value is Person person)
+        {
+            TypeOfNewVareth = NewVarethType.Person;
+            parentNodeName = person.FullName;
+        }
+        else if(NodeTreeItem.Value is SubNode subNode)
+        {
+            TypeOfNewVareth = NewVarethType.SubNode;
+            parentNodeName = subNode.Title;
+            
+            NewVareth.AbiOmmi = AbiOmmi.Abavaini;
+            switch (subNode.Type)
+            {
+                case SubNodeType.AmamAbi:
+                case SubNodeType.BrothersAndSistersAbi:
+                case SubNodeType.AkhvalAbi:
+                    NewVareth.AbiOmmi = AbiOmmi.Abi;
+                    break;
+                case SubNodeType.AmamOmmi:
+                case SubNodeType.BrothersAndSistersOmmi:
+                case SubNodeType.AkhvalOmmi: 
+                    NewVareth.AbiOmmi = AbiOmmi.Ommi;
+                    break;
+            }
+        }
+        else if (NodeTreeItem.Value is Tabagheh tabagheh && tabagheh.Type == TabaghehType.Hamsar) //همسر
+        {
+            TypeOfNewVareth = NewVarethType.Hamsar;
+            parentNodeName = tabagheh.Title;
+        }
+        else 
+        {
+            Console.WriteLine($"خطا! گره ی والد نوع درستی ندارد");
+        }
+    }
+
+    private void BtnOkClicked()
+    {
+
+        switch (TypeOfNewVareth)
+        {
+            case NewVarethType.SubNode:
+                var subNode = NodeTreeItem.Value as SubNode;
+                Console.WriteLine($"افزودن گره به {subNode.Title}");
+                AddNode.AddNodeToSubNode(subNode, Movareth, NewVareth);
+                break;
+            case NewVarethType.Person:
+                var person = NodeTreeItem.Value as Person;
+                Console.WriteLine($"افزودن گره به {person.FullName}");
+                AddNode.AddNodeToPerson(person, NewVareth);
+                break;
+            case NewVarethType.Hamsar:
+                var tabagheh = NodeTreeItem.Value as Tabagheh;
+                Console.WriteLine($"افزودن گره به {tabagheh.Title}");
+                HamsarAddEditDelete.AddHamsar(Movareth, NewVareth);
+                break;   
+            default:
+                Console.WriteLine($"خطا! گره ی والد نوع درستی ندارد");
+                break;
+        }
+
+
+        dialogService.Close(true);
+    }
 }

@@ -1,8 +1,9 @@
 ﻿@page "/counter"
 @inject IJSRuntime jsRuntime
-@* @inject DialogService dialogService *@
+@inject DialogService dialogService
 @using Microsoft.AspNetCore.Components.CompilerServices
-
+<RadzenDialog />
+<RadzenNotification />
 
 <RadzenPanel AllowCollapse="true" Style="margin-bottom:20px;">
    <HeaderTemplate >
@@ -827,7 +828,7 @@
                 RuntimeHelpers.TypeCheck(
                     EventCallback.Factory.Create<MouseEventArgs>(
                             context,
-                            (args) => AddBtnClicked(args, context, context.Tree)
+                            (args) => AddBtnClicked(args, context)
                         )
                     )
             );
@@ -876,43 +877,22 @@
         _thisComponent.StateHasChanged();        
     }
 
-    static void AddBtnClicked(MouseEventArgs args, RadzenTreeItem context, RadzenTree tree)
+    static void AddBtnClicked(MouseEventArgs args, RadzenTreeItem context)
     {
         // در اینجا باید یک فرم نمایش داده شود که اطلاعات وارث جدید شامل:
         // نام کامل
         // جنسیت
         // و زنده بودن یا نبودن
         // او را از کاربر بگیرد و باز گرداند
-        var newPerson = new Person {
-            FullName = "وارث جدید",
-            Gender = Gender.Female,
-            AbiOmmi = AbiOmmi.Abi,
-            IsAlive = true
-        };
 
-        if (context.Value is Person person)
-        {
-            Console.WriteLine($"افزودن گره به {person.FullName}");
-            AddNode.AddNodeToPerson(person, newPerson);
-        }
-        else if (context.Value is SubNode subNode)
-        {
-            Console.WriteLine($"افزودن گره به {subNode.Title}");
-            AddNode.AddNodeToSubNode(subNode, _movareth, newPerson);
-        }
-        else if (context.Value is Tabagheh tabagheh && tabagheh.Type == TabaghehType.Hamsar)
-        {
-            Console.WriteLine($"افزودن گره به {tabagheh.Title}");
-            HamsarAddEditDelete.AddHamsar(_movareth, newPerson);
-        }
-        else 
-        {
-            Console.WriteLine($"خطا! گره ی والد نوع درستی ندارد");
-            return;
-        }
+        _thisComponent.dialogService.Open<DialogAddNewPerson>($"افزودن خویشاوند جدید",
+            new Dictionary<string, object>() { 
+                                                { "NodeTreeItem", context },
+                                                { "Movareth", _movareth}
+                                             }
+            );
         
-        // Unfurchanatly StateHasChanged does not usable in a static method!!
-        _thisComponent.StateHasChanged();  
+        
     }
 
    

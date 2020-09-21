@@ -137,6 +137,34 @@ app {
     top: 0.5rem;
 }
 
+/* For Radzen */
+.ui-tree {
+    display: block;
+    padding: 25px;
+}
+
+.ui-treenode-children {
+    margin: 0 4rem 0 0;
+}
+
+.ui-tree-toggler.pi.pi-caret-right {
+    transform: rotate(180deg);
+}
+
+.ui-panel {
+    border-style: solid;
+    border-width: 1px;
+}
+
+.ui-dialog-wrapper {
+    width: 95%;
+    justify-content: center;
+    text-align: right;
+    margin: auto;
+    left: 0;
+    right: 0;
+}
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;
@@ -148,6 +176,12 @@ app {
 
     .main .top-row a, .main .top-row .btn-link {
         margin-left: 0;
+    }
+
+    .ui-dialog-wrapper {
+        width: 100% ;
+        justify-content: right ;
+        text-align: right;
     }
 }
 
@@ -184,21 +218,3 @@ app {
 }
 
 
-/* For Radzen */
-.ui-tree {
-    display: block;
-    padding: 25px;
-}
-
-.ui-treenode-children {
-    margin: 0 4rem 0 0;
-}
-
-.ui-tree-toggler.pi.pi-caret-right {
-    transform: rotate(180deg);
-}
-
-.ui-panel {
-    border-style: solid;
-    border-width: 1px;
-}
