@@ -15,24 +15,26 @@ namespace T00.Shared.ErthTreeCodes
         /// اعمام و اخوال
         /// </summary>
         /// <param name="subNode">گره ریشه</param>
-        /// <param name="person">گره موجود</param>
+        /// <param name="movareth">گره موجود</param>
         /// <param name="newPerson">گره جدید</param>
-        public static void AddNodeToSubNode(SubNode subNode, Person person, Person newPerson)
+        public static void AddNodeToSubNode(SubNode subNode, Person movareth, Person newPerson)
         {
             switch (subNode.Type)
             {
                 case SubNodeType.Parents:
-                    ParentsAddEditDelete.AddParent(person, newPerson);
+                    ParentsAddEditDelete.AddParent(movareth, newPerson);
                     break;
                 case SubNodeType.Children:
-                    ChildrenAddEditDelete.AddChild(person, newPerson);
+                    ChildrenAddEditDelete.AddChild(movareth, newPerson);
                     break;
                 case SubNodeType.Grandparents:
-                    GrandparentsAddEditDelete.AddGrandparent(person, newPerson);
+                    GrandparentsAddEditDelete.AddGrandparent(movareth, newPerson);
                     break;
+                //Todo: تا اینجا کامل شد
                 case SubNodeType.BrothersAndSistersAbavaini:
                 case SubNodeType.BrothersAndSistersAbi:
                 case SubNodeType.BrothersAndSistersOmmi:
+                    BrothersSistersAddEditDelete.AddABrotherOrSister(movareth, newPerson);
                     break;
                 case SubNodeType.AmamAbavaini:
                 case SubNodeType.AmamAbi:

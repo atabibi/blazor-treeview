@@ -7,7 +7,7 @@ namespace T00.Shared.ErthTreeCodes
     {
         public static void DeleteABrotherOrSister(Person movareth, Person person)
         {
-            var personParentFound = FindABrotherOrSisterPerson(movareth, person);
+            var personParentFound = FindABrotherOrSisterParent(movareth, person);
 
             if (personParentFound == null)
             {
@@ -35,25 +35,58 @@ namespace T00.Shared.ErthTreeCodes
             }
         }
 
-        static Person FindABrotherOrSisterPerson(Person parent, Person bsOrHisChild)
+        /// <summary>
+        /// افزودن یک برادر یا خواهر به مورث
+        /// نکته: این تابع صرفا برادران و خواهران درجه ۱ را اضافه می کند.
+        /// برای زیرشاخه ها از تابع 
+        /// AddNodeToPerson
+        /// در کلاس
+        /// AddNode
+        /// استفاده کنید
+        /// </summary>
+        /// <param name="movareth">مورث</param>
+        /// <param name="bsPerson">برادر یا خواهر جدید</param>
+        internal static void AddABrotherOrSister(Person movareth, Person bsPerson)
+        {
+            var subNodeType = SubNodeType.Unknown;
+            switch (bsPerson.AbiOmmi)
+            {
+                case AbiOmmi.Abavaini:
+                    subNodeType = SubNodeType.BrothersAndSistersAbavaini;
+                    break;
+                case AbiOmmi.Abi:
+                    subNodeType = SubNodeType.BrothersAndSistersAbi;
+                    break;
+                case AbiOmmi.Ommi:
+                    subNodeType = SubNodeType.BrothersAndSistersOmmi;
+                    break;
+            }
+
+            bsPerson.SubNodeType = subNodeType;
+            bsPerson.Tabagheh = TabaghehType.Tabagheh2;
+            bsPerson.Darajeh = 1;
+            movareth.BrothersAndSisters.Add(bsPerson);
+        }
+
+        static Person FindABrotherOrSisterParent(Person parent, Person bsOrHisChild)
         {
             Person found = null;
 
             if (parent.Tabagheh == TabaghehType.Tabagheh2) // parent is Not Movareth
             {
                 found = parent.Children?.SingleOrDefault(p => p == bsOrHisChild);
-                
+
                 if (found != null)
                 {
                     return parent;
                 }
-                
+
                 if (parent.Children != null)
                 {
                     Person parentFound = null;
                     foreach (var p in parent.Children)
                     {
-                        parentFound = FindABrotherOrSisterPerson(p, bsOrHisChild);
+                        parentFound = FindABrotherOrSisterParent(p, bsOrHisChild);
                         if (parentFound != null)
                         {
                             return parentFound;
@@ -75,7 +108,7 @@ namespace T00.Shared.ErthTreeCodes
                     Person parentFound = null;
                     foreach (var p in parent.BrothersAndSisters)
                     {
-                        parentFound = FindABrotherOrSisterPerson(p, bsOrHisChild);
+                        parentFound = FindABrotherOrSisterParent(p, bsOrHisChild);
                         if (parentFound != null)
                         {
                             return parentFound;
