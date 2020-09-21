@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace T00.Shared.ErthTreeCodes
@@ -88,6 +89,55 @@ namespace T00.Shared.ErthTreeCodes
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// افزودن یک عمو عمه دایی یا خاله
+        /// از هریک از انواع ابوینی ابی یا امی
+        /// فقط درجه یک به مورث
+        /// نکته: این تابع تنها اعمام و اخوال درجه یک را اضافه می کند 
+        /// برای درجات بالاتر از تابع
+        /// AddNodeToPerson
+        /// در کلاس 
+        /// AddNodes
+        /// استفاده کنید
+        /// </summary>
+        /// <param name="movareth">مورث</param>
+        /// <param name="amAkhPerson">عمو عمه خاله دایی درجه یک</param>
+        /// <param name="subNodeType">نوع عمو دایی خاله عمه ابی ابوینی </param>
+        internal static void AddAmmOrAkh(Person movareth, Person amAkhPerson, SubNodeType subNodeType)
+        {
+            amAkhPerson.SubNodeType = subNodeType;
+            amAkhPerson.Darajeh = 1;
+            amAkhPerson.Tabagheh = TabaghehType.Tabagheh3;
+
+            if (
+                (subNodeType == SubNodeType.AkhvalAbavaini) ||
+                (subNodeType == SubNodeType.AkhvalAbi) ||
+                (subNodeType == SubNodeType.AkhvalOmmi) 
+            )
+            {
+                if (movareth.Akhval == null)
+                    movareth.Akhval = new List<Person>();
+
+                movareth.Akhval.Add(amAkhPerson);
+            }
+            else if (
+                (subNodeType == SubNodeType.AmamAbavaini) ||
+                (subNodeType == SubNodeType.AmamAbi) ||
+                (subNodeType == SubNodeType.AmamOmmi)
+            )
+            {
+                if (movareth.Amam == null)
+                    movareth.Amam = new List<Person>();
+
+                movareth.Amam.Add(amAkhPerson);
+            }
+            else
+            {
+                Console.WriteLine("خطا! تنها اعمام و اخوال اجازه افزوده شدن دارند");
+                return;
+            }
         }
     }
 }

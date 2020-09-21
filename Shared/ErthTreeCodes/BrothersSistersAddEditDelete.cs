@@ -46,25 +46,22 @@ namespace T00.Shared.ErthTreeCodes
         /// </summary>
         /// <param name="movareth">مورث</param>
         /// <param name="bsPerson">برادر یا خواهر جدید</param>
-        internal static void AddABrotherOrSister(Person movareth, Person bsPerson)
+        /// <param name="subNodeType">نوع برادر خواهر ابی یا ابوینی</param>
+        internal static void AddABrotherOrSister(Person movareth, Person bsPerson, SubNodeType subNodeType)
         {
-            var subNodeType = SubNodeType.Unknown;
-            switch (bsPerson.AbiOmmi)
-            {
-                case AbiOmmi.Abavaini:
-                    subNodeType = SubNodeType.BrothersAndSistersAbavaini;
-                    break;
-                case AbiOmmi.Abi:
-                    subNodeType = SubNodeType.BrothersAndSistersAbi;
-                    break;
-                case AbiOmmi.Ommi:
-                    subNodeType = SubNodeType.BrothersAndSistersOmmi;
-                    break;
-            }
-
             bsPerson.SubNodeType = subNodeType;
             bsPerson.Tabagheh = TabaghehType.Tabagheh2;
             bsPerson.Darajeh = 1;
+
+            if (
+                (subNodeType != SubNodeType.BrothersAndSistersAbavaini) &&
+                (subNodeType != SubNodeType.BrothersAndSistersAbi) &&
+                (subNodeType != SubNodeType.BrothersAndSistersOmmi)
+             )
+            {
+                Console.WriteLine("خطا! تنها برادران و خواهران درجه یک اجازه افزوده شدن دارند");
+            }
+            
             movareth.BrothersAndSisters.Add(bsPerson);
         }
 

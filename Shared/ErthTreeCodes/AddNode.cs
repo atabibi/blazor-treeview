@@ -30,19 +30,18 @@ namespace T00.Shared.ErthTreeCodes
                 case SubNodeType.Grandparents:
                     GrandparentsAddEditDelete.AddGrandparent(movareth, newPerson);
                     break;
-                //Todo: تا اینجا کامل شد
                 case SubNodeType.BrothersAndSistersAbavaini:
                 case SubNodeType.BrothersAndSistersAbi:
                 case SubNodeType.BrothersAndSistersOmmi:
-                    BrothersSistersAddEditDelete.AddABrotherOrSister(movareth, newPerson);
+                    BrothersSistersAddEditDelete.AddABrotherOrSister(movareth, newPerson, subNode.Type);
                     break;
                 case SubNodeType.AmamAbavaini:
                 case SubNodeType.AmamAbi:
                 case SubNodeType.AmamOmmi:
-                    break;
                 case SubNodeType.AkhvalAbavaini:
                 case SubNodeType.AkhvalAbi:
                 case SubNodeType.AkhvalOmmi:
+                    AmamAkhvalAddEditDelete.AddAmmOrAkh(movareth, newPerson,subNode.Type);
                     break;
             }
         }
