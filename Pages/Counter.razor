@@ -7,9 +7,13 @@
 
 <RadzenPanel AllowCollapse="true" Style="margin-bottom:20px;">
    <HeaderTemplate >
-            <b style="font-size:30px;">وراث عباس طبیبی</b>
+        <div>            
+            <RadzenButton Text="ایجاد پرونده جدید" Click="CreateNewMovareth"/>
+            <RadzenButton Text="ذخیره پرونده جاری" Click="CreateNewMovareth"/>
+        </div>
     </HeaderTemplate>
     <ChildContent>
+        <h3>وراث @(_movareth.Gender == Gender.Male ? "مرحوم" : "مرحومه") @_movareth.FullName</h3>
         <RadzenTree Data="@_tabaghat" Expand="@LoadPeople" style="display: block;">
             <RadzenTreeLevel Text="@GetTextForNode" Template="@_nodeTemplate" />
         </RadzenTree>
@@ -47,6 +51,15 @@
         FullName = "عباس طبیبی",
         Gender = Gender.Male,
     };
+
+    private void CreateNewMovareth()
+    {
+        _thisComponent.dialogService.Open<DialogNewProject>($"ایجاد پرونده جدید",
+            new Dictionary<string, object>() {
+                                                { "Movareth", _movareth}
+                                             }
+            );        
+    }
 
     protected override void OnInitialized()
     {

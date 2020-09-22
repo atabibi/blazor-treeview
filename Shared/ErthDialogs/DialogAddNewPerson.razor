@@ -6,13 +6,13 @@
     <div class="row">
         <div class="col-md-12">
             <div class="input-group mb-2">            
-                <RadzenTextBox Placeholder="نام کامل" @bind-Value="@NewVareth.FullName" />
+                <RadzenTextBox Placeholder="نام کامل" @bind-Value="@NewVareth.FullName" Style="width:100%;"/>
             </div>
             @if (TypeOfNewVareth != NewVarethType.Hamsar)
             {
                 
                 <div class="input-group mb-2">            
-                    <RadzenDropDown AllowClear="false" @bind-Value="@NewVareth.Gender" TValue="Gender"  Placeholder="جنسیت" Data="@GenderForDropDown" TextProperty="Title" ValueProperty="Gender"  />
+                    <RadzenDropDown AllowClear="false" @bind-Value="@NewVareth.Gender" TValue="Gender"  Placeholder="جنسیت" Data="@GenderForDropDown" TextProperty="Title" ValueProperty="Gender"  Style="width:100%;"/>
                 </div>
 
 
@@ -24,7 +24,7 @@
                     )
                     {
                         <div class="input-group mb-2">            
-                            <RadzenDropDown AllowClear="false" @bind-Value="@NewVareth.AbiOmmi" TValue="AbiOmmi"  Placeholder="ابی، امی یا ابوینی" Data="@AbiOmmiForDropDown.Where(w=>w.AbiOmmi != AbiOmmi.Abavaini)" TextProperty="Title" ValueProperty="AbiOmmi"  />
+                            <RadzenDropDown AllowClear="false" @bind-Value="@NewVareth.AbiOmmi" TValue="AbiOmmi"  Placeholder="ابی، امی یا ابوینی" Data="@AbiOmmiForDropDown.Where(w=>w.AbiOmmi != AbiOmmi.Abavaini)" TextProperty="Title" ValueProperty="AbiOmmi" Style="width:100%;" />
                         </div>
                     }
                 }   
@@ -52,15 +52,7 @@
         Person
     }
 
-    protected class GenderForDropDownType {
-        public Gender Gender { get; set; }
-        public string Title { get; set; }
-    }
-
-    protected class AbiOmmiForDropDownType {
-        public AbiOmmi AbiOmmi { get; set; }
-        public string Title { get; set; }
-    }
+   
 
     [Parameter] 
     public RadzenTreeItem NodeTreeItem {get;set;}

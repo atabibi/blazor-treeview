@@ -165,6 +165,20 @@ app {
     right: 0;
 }
 
+.ui-dropdown-items-wrapper
+{
+    text-align: right;
+}
+
+.ui-dialog-titlebar-close {
+    float: left;
+}
+
+.ui-dropdown-trigger, .ui-multiselect-trigger {
+    right: unset;
+    left: 0;    
+}
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;
