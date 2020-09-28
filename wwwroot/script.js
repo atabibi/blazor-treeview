@@ -1,3 +1,4 @@
+
 function RedesignNodes() {
     $(".ui-tree-toggler").parent().css("margin-right","-25px")
 }
@@ -9,4 +10,8 @@ function saveAsFile(filename, bytesBase64) {
     document.body.appendChild(link); // Needed for Firefox
     link.click();
     document.body.removeChild(link);
+}
+
+function  loadFileClicked() {
+    document.getElementById('getFile').click();  
 }

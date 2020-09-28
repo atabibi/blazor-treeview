@@ -11,7 +11,8 @@
         <div>            
             <RadzenButton Text="ایجاد پرونده جدید" Click="CreateNewMovareth"/>
             <RadzenButton Text="ذخیره پرونده جاری" Click="SaveMovareth"/>
-            <RadzenButton Text="بارگذاری پرونده موجود" Click="LoadMovareth"/>
+            <RadzenButton Text="بارگذاری پرونده موجود" Click="InputFileClicked" />
+            <InputFile OnChange="LoadMovareth" id="getFile" style="display:none"/>
         </div>
     </HeaderTemplate>
     <ChildContent>
@@ -579,9 +580,19 @@
         await SaveLoadJsonFile.Download(jsRuntime, _movareth);
     }
 
-    async Task LoadMovareth()
+    async Task InputFileClicked()
     {
-        //_movareth = await SaveLoadJsonFile.Upload(jsRuntime);
+        await jsRuntime.InvokeVoidAsync("loadFileClicked");
+    }
+
+    async Task LoadMovareth(IFileListEntry[] files)
+    {        
+        var file = files.FirstOrDefault();
+        @if (file != null)
+        {
+            _movareth = await SaveLoadJsonFile.Upload(file);
+            // _thisComponent.StateHasChanged();  
+        }
     }
 
     // Jquery
