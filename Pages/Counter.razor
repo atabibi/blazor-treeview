@@ -1,6 +1,7 @@
 ﻿@page "/counter"
 @inject IJSRuntime jsRuntime
 @inject DialogService dialogService
+@inject HttpClient http;
 @using Microsoft.AspNetCore.Components.CompilerServices
 <RadzenDialog />
 <RadzenNotification />
@@ -9,7 +10,8 @@
    <HeaderTemplate >
         <div>            
             <RadzenButton Text="ایجاد پرونده جدید" Click="CreateNewMovareth"/>
-            <RadzenButton Text="ذخیره پرونده جاری" Click="CreateNewMovareth"/>
+            <RadzenButton Text="ذخیره پرونده جاری" Click="SaveMovareth"/>
+            <RadzenButton Text="بارگذاری پرونده موجود" Click="LoadMovareth"/>
         </div>
     </HeaderTemplate>
     <ChildContent>
@@ -572,7 +574,15 @@
         
     }
 
-   
+    async Task SaveMovareth()
+    { 
+        await SaveLoadJsonFile.Download(jsRuntime, _movareth);
+    }
+
+    async Task LoadMovareth()
+    {
+        //_movareth = await SaveLoadJsonFile.Upload(jsRuntime);
+    }
 
     // Jquery
     protected override async Task OnAfterRenderAsync(bool firstRender)
