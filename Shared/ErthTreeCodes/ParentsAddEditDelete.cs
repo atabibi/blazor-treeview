@@ -26,6 +26,12 @@ namespace T00.Shared.ErthTreeCodes
                 return;
             }
 
+            if (newPerson.Gender == Gender.Neutral)
+            {
+                Console.WriteLine("والدین نمی توانند خنثی باشند");
+                return;
+            }
+
             newPerson.MustBeLastNode = true;
             newPerson.SubNodeType = SubNodeType.Parents;
             newPerson.Tabagheh = TabaghehType.Tabagheh1;
