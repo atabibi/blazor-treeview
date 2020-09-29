@@ -6,8 +6,8 @@
 <RadzenDialog />
 <RadzenNotification />
 
-<RadzenPanel AllowCollapse="true" Style="margin-bottom:20px;">
-   <HeaderTemplate >
+<RadzenPanel AllowCollapse="true" class="mb-2">
+   <HeaderTemplate>
         <div>            
             <RadzenButton Text="ایجاد پرونده جدید" Click="CreateNewMovareth"/>
             <RadzenButton Text="ذخیره پرونده جاری" Click="SaveMovareth"/>
@@ -23,6 +23,29 @@
     </ChildContent>
 </RadzenPanel>
 
+<RadzenPanel AllowCollapse="true" class="mb-2">
+    <HeaderTemplate>
+        <div>            
+            <RadzenButton Text="محاسبه" Click="Calculate"/>            
+        </div>
+    </HeaderTemplate>
+    <ChildContent>
+        <h3>نتایج</h3>
+        <p>@calculationMessage</p>
+
+        @if (VorratheErthBar != null)
+        {
+            <h4>خویشاوندان ارث بر:</h4>
+            <ul>
+                @foreach (var person in VorratheErthBar)
+                {
+                    <li>@person.FullName از طبقه @(((int)person.Tabagheh)+1) و درجه @person.Darajeh</li>
+                }
+            </ul>
+        }
+       
+    </ChildContent>
+</RadzenPanel>
 
 @code {
 
@@ -47,6 +70,11 @@
     //---------------------------------
 
     static Counter _thisComponent {get; set;}
+    
+    string calculationMessage {get; set;} = "برای انجام محاسبات ارث بر روی دکمه محاسبه کلیک کنید";
+    IList<Person> VorratheErthBar {get; set;}
+
+
     IEnumerable<Tabagheh> _tabaghat;
 
     private static Person _movareth = new Person
@@ -574,7 +602,21 @@
         
         
     }
+    
+    // انجام محاسبات
+    void Calculate()
+    {
+        if (_movareth == null)
+        {
+            calculationMessage = "ابتدا وراث را وارد کنید";
+            return;
+        }
 
+        CalculateErth calculateErth = new CalculateErth(_movareth);
+        VorratheErthBar = calculateErth.ValidVaratheh;
+    }
+
+    // ذخیره و بازیابی فایل مورث
     async Task SaveMovareth()
     { 
         await SaveLoadJsonFile.Download(jsRuntime, _movareth);

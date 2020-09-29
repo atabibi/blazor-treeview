@@ -20,17 +20,17 @@ namespace T00.Shared.ErthTreeCodes
 
         public AbiOmmi AbiOmmi { get; set; }
 
-        public List<Person> Children { get; set; }
+        public List<Person> Children { get; set; } = new List<Person>();
 
-        public List<Person> Parents { get; set; }
+        public List<Person> Parents { get; set; } = new List<Person>();
 
-        public List<Person> Hamsar { get; set; }
+        public List<Person> Hamsar { get; set; } = new List<Person>();
 
-        public List<Person> Ajdad { get; set; }
+        public List<Person> Ajdad { get; set; } = new List<Person>();
 
-        public List<Person> BrothersAndSisters { get; set; }
-        public List<Person> Amam { get; set; }
-        public List<Person> Akhval { get; set; }
+        public List<Person> BrothersAndSisters { get; set; } = new List<Person>();
+        public List<Person> Amam { get; set; } = new List<Person>();
+        public List<Person> Akhval { get; set; } = new List<Person>();
 
         /// <summary>
         /// در مورد والدین و همسر نباید امکان
