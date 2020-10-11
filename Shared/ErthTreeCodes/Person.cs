@@ -44,7 +44,7 @@ namespace T00.Shared.ErthTreeCodes
         {
             get
             {
-                int id = (int) this.Tabagheh & 0x000000FF | (int) this.SubNodeType & 0x0000FF00 |
+                int id = (int)this.Tabagheh & 0x000000FF | (int)this.SubNodeType & 0x0000FF00 |
                          this.Darajeh & 0x00FF0000;
                 return id;
             }
@@ -52,7 +52,7 @@ namespace T00.Shared.ErthTreeCodes
 
         public static TabaghehType GetTabaghehFromId(int id)
         {
-            return (TabaghehType) (id & 0x000000FF);
+            return (TabaghehType)(id & 0x000000FF);
         }
 
         public static SubNodeType GetSubNodeTypeFromId(int id)
@@ -67,9 +67,11 @@ namespace T00.Shared.ErthTreeCodes
 
         public override string ToString()
         {
+            string strZoj = this.Gender == Gender.Male ? "زوج" : "زوجه";
+
             return this.Tabagheh == TabaghehType.Hamsar ?
-                 $"{this.FullName}: همسر" :
-                 $"{this.FullName} از {this.Tabagheh.ToPersianString()} و درجه {this.Darajeh}";
+                 $"{this.FullName}: همسر ({strZoj})" :
+                 $"{this.FullName} از {this.Tabagheh.ToPersianString()} و درجه {this.Darajeh} ({this.SubNodeType.ToPersianString(this.Gender == Gender.Male, this.Darajeh)})";
         }
     }
 
