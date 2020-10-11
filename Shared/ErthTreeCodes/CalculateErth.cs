@@ -34,14 +34,18 @@ namespace T00.Shared.ErthTreeCodes
                     break;
                 case TabaghehType.Tabagheh2:
                     Console.WriteLine("وراث از طبقه دوم هستند");
+                    AddVorrath(ValidVaratheh, TabaghehType.Tabagheh2);
                     break;
                 case TabaghehType.Tabagheh3:
                     Console.WriteLine("وراث از طبقه سوم هستند");
+                    AddVorrath(ValidVaratheh, TabaghehType.Tabagheh3);
                     break;
                 default:
                     Console.WriteLine("وارث زنده ای در هیچ کدام از طبقات سه گانه نیست");
                     break;
             }
+
+            AddHamsar(ValidVaratheh);
 
         }
 
@@ -239,32 +243,193 @@ namespace T00.Shared.ErthTreeCodes
                 case TabaghehType.Tabagheh1:
                     
                     // Parents
-                    foreach (var vareth in _movareth.Parents.Where(p=>p.IsAlive && p.Gender != Gender.Neutral))
-                    {
-                        vorrath.Add(vareth);
-                    }
+                    AddErthBarParents(vorrath);
 
                     // Children
-                    var allChildren = AllChildrenWithAnyDarajeh(_movareth);
-
-                    //کمترین درجه فرزندان یا نوه های زنده را بیاب
-                    // هر فرزند یا نوه با درجه بالاتر ارث بر نخواهد بود
-                    var aliveChildren = allChildren.Where(p=>p.IsAlive);
-                    if (aliveChildren.Count() > 0)
-                    {
-                        var minDarajeh = aliveChildren.Min(p => p.Darajeh);
-                        allChildren.Where(p=>p.IsAlive && p.Darajeh == minDarajeh).ToList().ForEach(p => vorrath.Add(p));
-                    }
+                    AddErthBarChildrenWithAnyDarajeh(vorrath);
                     
                     break;
                 case TabaghehType.Tabagheh2:
-                    Console.WriteLine("تغیین وراث طبقه ۲ هنوز نوشته نشده است");
+                
+                    // اجداد
+                    AddErthBarAjdad(vorrath);
+
+                    // برادران و خواهران
+                    AddErthBarBrothersAndSisters(vorrath);
+
                     break;
                 case TabaghehType.Tabagheh3:
-                    Console.WriteLine("تغیین وراث طبقه 3 هنوز نوشته نشده است");
+                    // اعمام
+                    AddAmam(vorrath);
+
+                    // اخوال
+                    AddAkhval(vorrath);
+
+                    break;
+                case TabaghehType.Hamsar:
+                    Console.WriteLine("افزودن همسر هنوز نوشته نشده است");
                     break;
 
             }
         }
+
+        #region افزودن طبقه اول به لیست وراث
+
+        /// <summary>
+        /// افزودن پدر یا مادر یا هر دو
+        /// به لیست وراث در صورت 
+        /// زنده بودن
+        /// </summary>
+        /// <param name="vorrath"></param>
+        private void AddErthBarParents(IList<Person> vorrath)
+        {
+            foreach (var vareth in _movareth.Parents.Where(p=>p.IsAlive && p.Gender != Gender.Neutral))
+            {
+                vorrath.Add(vareth);
+            }
+        }
+
+        /// <summary>
+        /// افزودن فرزندان یا نوه های
+        /// ارث بر به لیست وراث
+        /// </summary>
+        /// <param name="vorrath"></param>
+        private void AddErthBarChildrenWithAnyDarajeh(IList<Person> vorrath)
+        {
+            var allChildren = AllChildrenWithAnyDarajeh(_movareth);
+
+            //کمترین درجه فرزندان یا نوه های زنده را بیاب
+            // هر فرزند یا نوه با درجه بالاتر ارث بر نخواهد بود
+            var aliveChildren = allChildren.Where(p=>p.IsAlive);
+            if (aliveChildren.Count() > 0)
+            {
+                var minDarajeh = aliveChildren.Min(p => p.Darajeh);
+                allChildren.Where(p=>p.IsAlive && p.Darajeh == minDarajeh).ToList().ForEach(p => vorrath.Add(p));
+            }
+        }
+
+        #endregion // افزودن طبقه اول به لیست وراث
+
+        #region افزودن طبقه دوم به لیست وراث
+
+
+        /// <summary>
+        /// افزودن اجداد ارث بر ا
+        /// از هر درجه ای
+        /// </summary>
+        /// <param name="vorrath"></param>
+        private void AddErthBarAjdad(IList<Person> vorrath)
+        {
+            var allAjdad = AllGrandparentsWithAnyDarajeh(_movareth);
+
+            // کمترین درجه اجداد زنده را بیاب
+            // هر جد یا جده با درجه بالاتر ارث  بر نخواهد بود
+            var aliveAjdad = allAjdad.Where(p =>p.IsAlive);
+            if (aliveAjdad.Count() > 0)
+            {
+                var minDarajeh = aliveAjdad.Min(p => p.Darajeh);
+                allAjdad.Where(p=>p.IsAlive && p.Darajeh == minDarajeh).ToList().ForEach(p => vorrath.Add(p));
+            }
+        }
+
+
+        /// <summary>
+        /// افزودن برادران و یا خواهران ارث بر
+        /// از هر درجه و نوعی
+        /// </summary>
+        /// <param name="vorrath"></param>
+        private void AddErthBarBrothersAndSisters(IList<Person> vorrath)
+        {
+            var allBrothersAndSisters = AllBrothersAndSistersWithAnyDarajeh(_movareth);
+
+            // فقط برادران و خواهران زند را بیاب
+            var aliveBS = allBrothersAndSisters.Where(p => p.IsAlive);
+
+            // حذف کلاله ابی در صورت زنده بودن حتی یک کلاله ابوینی
+            bool anyAbavaini = aliveBS.Count(p => p.AbiOmmi == AbiOmmi.Abavaini) > 0;
+            if (anyAbavaini)
+            {
+                aliveBS = aliveBS.Where(p => p.AbiOmmi != AbiOmmi.Abi);
+            }
+
+            // نگهداشتن پایین ترین درجه و حذف همه درجات بالاتر
+            if (aliveBS.Count() > 0)
+            {
+                var minDarajeh = aliveBS.Min(p => p.Darajeh);
+                aliveBS.Where(p => p.Darajeh == minDarajeh).ToList().ForEach(p => vorrath.Add(p));
+            }
+        }
+
+        #endregion
+    
+        #region  افزودن طبقه سوم به لیست وراث
+
+        /// <summary>
+        /// افزودن اعمام ارث برا
+        /// از هر درجه و نوعی
+        /// </summary>
+        /// <param name="vorrath"></param>
+        private void AddAmam(IList<Person> vorrath)
+        {
+            // همه اعمام از هر درجه ای زنده یا مرده
+            var allAmam = AllAmamWithAnyDarajeh(_movareth);
+
+            // فقط اعمام زنده
+            var aliveAmam = allAmam.Where(p => p.IsAlive);
+
+            // حذف کلاله ابی در صورت زنده بودن حتی یک کلاله ابوینی
+            bool anyAbavaini = aliveAmam.Count(p => p.AbiOmmi == AbiOmmi.Abavaini) > 0;
+            if (anyAbavaini)
+            {
+                aliveAmam = aliveAmam.Where(p => p.AbiOmmi != AbiOmmi.Abi);
+            }
+
+            // نگهداشتن پایین ترین درجه و حذف همه درجات بالاتر
+            if (aliveAmam.Count() > 0)
+            {
+                var minDarajeh = aliveAmam.Min(p => p.Darajeh);
+                aliveAmam.Where(p => p.Darajeh == minDarajeh).ToList().ForEach(p => vorrath.Add(p));
+            }
+            
+        }
+
+        /// <summary>
+        /// افزدون اخوال ارث بر
+        /// از هر درجه و نوعی
+        /// </summary>
+        /// <param name="vorrath"></param>
+        private void AddAkhval(IList<Person> vorrath)
+        {
+            // همه اخوال از هر درجه ای زنده یا مرده
+            var allAkhval = AllAkhvalWithAnyDarajeh(_movareth);
+
+            // فقط اخوال زنده
+            var aliveAkhval = allAkhval.Where(p => p.IsAlive);
+
+            // حذف کلاله ابی در صورت زنده بودن حتی یک کلاله ابوینی
+            bool anyAbavaini = aliveAkhval.Count(p => p.AbiOmmi == AbiOmmi.Abavaini) > 0;
+            if (anyAbavaini)
+            {
+                aliveAkhval = aliveAkhval.Where(p => p.AbiOmmi != AbiOmmi.Abi);
+            }
+
+            // نگهداشتن پایین ترین درجه و حذف همه درجات بالاتر
+            if (aliveAkhval.Count() > 0)
+            {
+                var minDarajeh = aliveAkhval.Min(p => p.Darajeh);
+                aliveAkhval.Where(p => p.Darajeh == minDarajeh).ToList().ForEach(p => vorrath.Add(p));
+            }
+        }
+
+        #endregion
+
+        #region افزودن همسر(ان) به لیست وراث
+        
+        private void AddHamsar(IList<Person> vorrath)
+        {
+            _movareth.Hamsar.Where(p => p.IsAlive).ToList().ForEach(p => vorrath.Add(p));
+        }
+        #endregion
+    
     }
 }

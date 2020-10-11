@@ -39,7 +39,7 @@
             <ul>
                 @foreach (var person in VorratheErthBar)
                 {
-                    <li>@person.FullName از طبقه @(((int)person.Tabagheh)+1) و درجه @person.Darajeh</li>
+                    <li>@person.ToString()</li>
                 }
             </ul>
         }

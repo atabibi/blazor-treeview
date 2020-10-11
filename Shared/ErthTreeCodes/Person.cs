@@ -64,6 +64,13 @@ namespace T00.Shared.ErthTreeCodes
         {
             return (id & 0x00FF0000);
         }
+
+        public override string ToString()
+        {
+            return this.Tabagheh == TabaghehType.Hamsar ?
+                 $"{this.FullName}: همسر" :
+                 $"{this.FullName} از {this.Tabagheh.ToPersianString()} و درجه {this.Darajeh}";
+        }
     }
 
     public enum Gender

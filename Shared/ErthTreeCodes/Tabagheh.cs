@@ -10,12 +10,35 @@ namespace T00.Shared.ErthTreeCodes
         public IList<SubNode> SubNodes { get; set; }
     }
 
-    public enum TabaghehType {
+    public enum TabaghehType
+    {
         Tabagheh1,
         Tabagheh2,
         Tabagheh3,
         Hamsar,
         Unknown = 255
+    }
+
+    public static class TabaghehTypeExtensions
+    {
+        public static string ToPersianString(this TabaghehType tabaghehType)
+        {
+            switch (tabaghehType)
+            {
+                case TabaghehType.Hamsar:
+                    return "همسر";
+                case TabaghehType.Tabagheh1:
+                    return "طبقه اول";
+                case TabaghehType.Tabagheh2:
+                    return "طبقه دوم";
+                case TabaghehType.Tabagheh3:
+                    return "طبقه سوم";
+                case TabaghehType.Unknown:
+                    return "طبقه نامشخص!";
+                default:
+                    return "نامشخص";
+            }
+        }
     }
 
     public class SubNode
@@ -24,7 +47,8 @@ namespace T00.Shared.ErthTreeCodes
         public string Title { get; set; }
     }
 
-    public enum SubNodeType {
+    public enum SubNodeType
+    {
         Parents,
         Children,
         Grandparents,
