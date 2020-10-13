@@ -14,8 +14,72 @@ namespace T00.Shared.ErthTreeCodes
         {
             _movareth = movareth;
             FillValidVaratheh();
+            CalcErths();
         }
 
+        private void CalcErths()
+        {
+            // ابتدا طبقه ارث بر را مشخص کن
+            TabaghehErthBar = DetermineTabaghehErthBar();
+
+            switch (TabaghehErthBar)
+            {
+                case TabaghehType.Tabagheh1:
+                    CalcErthTabagheh1();
+                    break;
+                case TabaghehType.Tabagheh2:
+                    CalcErthTabagheh2();
+                    break;
+                case TabaghehType.Tabagheh3:
+                    CalcErthTabagheh3();
+                    break;
+                
+            }
+        }
+
+        private void CalcErthTabagheh1()
+        {
+            Console.WriteLine("ارث طبقه اول هنوز کامل نشد ه است");
+            
+            // مرحله اول: حذف شاخه هایی که در انتهای آنها گره زنده وجود ندارد
+            #if DEBUG
+            Console.WriteLine("Before RemoveEndlessRoots");
+            ShowChildrenInConsole(_movareth.Children);
+            #endif
+            _movareth.Children = RemoveEndlessRoots(_movareth.Children);
+            #if DEBUG
+            Console.WriteLine("After RemoveEndlessRoots");
+            ShowChildrenInConsole(_movareth.Children);
+            #endif
+        }
+
+        private void CalcErthTabagheh2()
+        {
+            Console.WriteLine(" ارث طبقه دوم را هنوز ننوشته ام");
+        }
+
+        private List<Person> RemoveEndlessRoots(List<Person> children)
+        {
+            for (int i = children.Count-1; i >=0; i--)
+            {
+                if (children[i].Children.Count > 0)
+                    children[i].Children = RemoveEndlessRoots(children[i].Children);
+
+                if (!(children[i].IsAlive) && children[i].Children.Count == 0) 
+                {
+                    // گره زنده نیست و هیچ فرزندی هم ندارد
+                    // بنابراین باید حذف شود
+                    children.RemoveAt(i);
+                }
+            }
+
+            return children;
+        }
+
+        private void CalcErthTabagheh3()
+        {
+            Console.WriteLine(" ارث طبقه سوم را هنوز ننوشته ام");
+        }
 
         /// <summary>
         /// وراث ارث بر را استخراج می کند
@@ -431,5 +495,17 @@ namespace T00.Shared.ErthTreeCodes
         }
         #endregion
     
+
+        #if DEBUG
+        void ShowChildrenInConsole(List<Person> children,string strLine="")
+        {
+            strLine += "-";
+            foreach (var p in children)
+            {
+                Console.WriteLine(strLine + p.FullName);
+                ShowChildrenInConsole(p.Children, strLine);
+            }
+        }
+        #endif
     }
 }
