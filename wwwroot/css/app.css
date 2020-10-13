@@ -180,6 +180,15 @@ app {
     left: 0;    
 }
 
+.btn-shape {
+    padding-left: 20px; 
+    padding-right: 20px; 
+    border-radius: 50%; 
+    background-color: white !important;
+    color: #4d59f7; 
+    margin: 0 4px; 
+    border: 2px solid #2c22f3;
+}
 
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {

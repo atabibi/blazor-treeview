@@ -16,36 +16,61 @@
         </div>
     </HeaderTemplate>
     <ChildContent>
-        <h3>وراث @(_movareth.Gender == Gender.Male ? "مرحوم" : "مرحومه") @_movareth.FullName</h3>
-        <RadzenTree Data="@_tabaghat" Expand="@LoadPeople" style="display: block;">
-            <RadzenTreeLevel Text="@GetTextForNode" Template="@_nodeTemplate" />
-        </RadzenTree>
-    </ChildContent>
-</RadzenPanel>
-
-<RadzenPanel AllowCollapse="true" class="mb-2">
-    <HeaderTemplate>
-        <div>            
-            <RadzenButton Text="محاسبه" Click="Calculate"/>            
-        </div>
-    </HeaderTemplate>
-    <ChildContent>
-        <h3>نتایج</h3>
-        <p>@calculationMessage</p>
-
-        @if (VorratheErthBar != null)
+        @if (NotYetMovarethCreated)
         {
-            <h4>خویشاوندان ارث بر:</h4>
-            <ul>
-                @foreach (var person in VorratheErthBar)
-                {
-                    <li>@person.ToString()</li>
-                }
-            </ul>
+            <h3>برای شروع یک پرونده جدید ایجاد کنید یا یک پرونده موجود را باز کنید</h3>
         }
-       
+        else
+        {
+            <h3>
+                @if(NeedToRefresh)
+                {
+                    <span>برای بروزرسانی درخت وراثت کلیک کنید.</span>
+                }
+                else
+                {
+                    <span>وراث @(_movareth.Gender == Gender.Male ? "مرحوم" : "مرحومه") @_movareth.FullName</span>
+                }
+                
+                <RadzenButton Click="RefreshTreeView" class="btn-shape" Image="images/refresh.png"></RadzenButton>
+            </h3>
+            @if (IsVisibleTreeView)
+            {
+                <RadzenTree Data="@_tabaghat" Expand="@LoadPeople" style="display: block;">
+                    <RadzenTreeLevel Text="@GetTextForNode" Template="@_nodeTemplate" />
+                </RadzenTree>
+            }        
+        }
+        
     </ChildContent>
 </RadzenPanel>
+
+@if (NotYetMovarethCreated == false)
+{
+    <RadzenPanel AllowCollapse="true" class="mb-2">
+        <HeaderTemplate>
+            <div>            
+                <RadzenButton Text="محاسبه" Click="Calculate"/>            
+            </div>
+        </HeaderTemplate>
+        <ChildContent>
+            <h3>نتایج</h3>
+            <p>@calculationMessage</p>
+
+            @if (VorratheErthBar != null)
+            {
+                <h4>خویشاوندان ارث بر:</h4>
+                <ul>
+                    @foreach (var person in VorratheErthBar)
+                    {
+                        <li>@person.ToString()</li>
+                    }
+                </ul>
+            }
+        
+        </ChildContent>
+    </RadzenPanel>
+}
 
 @code {
 
@@ -74,22 +99,28 @@
     string calculationMessage {get; set;} = "برای انجام محاسبات ارث بر روی دکمه محاسبه کلیک کنید";
     IList<Person> VorratheErthBar {get; set;}
 
-
+    bool IsVisibleTreeView = true;
+    bool NotYetMovarethCreated = true;
+    bool NeedToRefresh = false;
     IEnumerable<Tabagheh> _tabaghat;
 
     private static Person _movareth = new Person
     {
-        FullName = "عباس طبیبی",
+        FullName = "نامشخص",
         Gender = Gender.Male,
     };
 
     private void CreateNewMovareth()
     {
-        _thisComponent.dialogService.Open<DialogNewProject>($"ایجاد پرونده جدید",
+        _thisComponent.dialogService.OpenAsync<DialogNewProject>($"ایجاد پرونده جدید",
             new Dictionary<string, object>() {
                                                 { "Movareth", _movareth}
                                              }
-            );        
+            );   
+
+        IsVisibleTreeView = false;
+        NotYetMovarethCreated = false;
+        NeedToRefresh = true;
     }
 
     protected override void OnInitialized()
@@ -592,6 +623,7 @@
         // جنسیت
         // و زنده بودن یا نبودن
         // او را از کاربر بگیرد و باز گرداند
+        
 
         _thisComponent.dialogService.Open<DialogAddNewPerson>($"افزودن خویشاوند جدید",
             new Dictionary<string, object>() { 
@@ -634,7 +666,15 @@
         {
             _movareth = await SaveLoadJsonFile.Upload(file);
             // _thisComponent.StateHasChanged();  
+            IsVisibleTreeView = false;
+            NotYetMovarethCreated = false;
         }
+    }
+
+    private void RefreshTreeView()
+    {
+       IsVisibleTreeView = !IsVisibleTreeView;  
+       NeedToRefresh = false;      
     }
 
     // Jquery
